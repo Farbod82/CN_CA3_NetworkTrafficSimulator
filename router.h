@@ -27,6 +27,7 @@ public:
     std::vector<Buffer*> ports;
 
     void processPackets(std::shared_ptr<Packet> packet, int inputPort);
+    void broadCast(std::shared_ptr<Packet> packet);
 public slots:
     void processPacketsOnSignal();
 private:
