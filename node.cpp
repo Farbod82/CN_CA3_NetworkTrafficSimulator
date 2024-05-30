@@ -1,5 +1,10 @@
 #include "node.h"
 
-Node::Node(QObject *parent)
+Node::Node(int _id,QObject *parent)
     : QObject{parent}
-{}
+{
+    id = _id;
+}
+
+
+

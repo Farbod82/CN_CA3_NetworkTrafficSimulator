@@ -3,21 +3,36 @@
 
 #include "node.h"
 #include <string>
+#include <vector>
 
 #include <QObject>
+#include <QHash>
+#include "buffer.h"
+
+
+
+#define NUMBER_OF_PORTS 5
+
+
+
 
 class Router : public Node
 {
     Q_OBJECT
 public:
-    explicit Router(QObject *parent = nullptr);
-    void createPacket();
+    explicit Router(int _id, QObject *parent = nullptr);
+    void createPacket(int outPort);
     void send(std::shared_ptr<std::string> data);
-public slots:
-    void recievePacket(std::shared_ptr<std::string> data);
 
-signals:
-    void sendPacket(std::shared_ptr<std::string> data);
+    std::vector<Buffer*> ports;
+
+    void processPackets(std::shared_ptr<Packet> packet, int inputPort);
+public slots:
+    void processPacketsOnSignal();
+private:
+    int id;
+    std::string ip;
+    QHash<std::string, QHash<std::string, int>> distanceVector;
 };
 
 #endif // ROUTER_H
