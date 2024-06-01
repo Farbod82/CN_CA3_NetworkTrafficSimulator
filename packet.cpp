@@ -20,6 +20,10 @@ void Packet::setBody(std::string _body){
 }
 
 
+std::string Packet::getType(){
+    return  Type;
+}
+
 
 
 

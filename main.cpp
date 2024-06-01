@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include "clockGenerator.h"
 
+#include "CommandReader.h"
+#include "cluster.h"
 #include "router.h"
 #include <qthread.h>
 #include <QtConcurrent>
@@ -12,36 +14,20 @@ int main(int argc, char *argv[])
     QThread thread1;
     QThread thread2;
     QThread thread3;
-    QThread thread4;
-    // Create the Router objects
-    Router router1(1);
-    Router router2(2);
-    Router router3(3);
     clockGenerator clk;
+    CommandReader cmndr;
+    Cluster cluster(1);
+    cluster.moveToThread(&thread2);
+    clk.moveToThread(&thread1);
+    cmndr.moveToThread(&thread3);
 
-    // Move the Router objects to their respective threads
-    router1.moveToThread(&thread1);
-    router2.moveToThread(&thread2);
-    router3.moveToThread(&thread4);
-    clk.moveToThread(&thread3);
-
-
-    // Connect the signals and slots
-    QObject::connect(router1.ports[0], &Buffer::sendPacketSignal, router2.ports[4], &Buffer::recievePacket);
-    QObject::connect(router2.ports[4], &Buffer::sendPacketSignal, router1.ports[0], &Buffer::recievePacket);
-    QObject::connect(router1.ports[1], &Buffer::sendPacketSignal, router2.ports[3], &Buffer::recievePacket);
-    QObject::connect(router2.ports[3], &Buffer::sendPacketSignal, router2.ports[1], &Buffer::recievePacket);
-    QObject::connect(&clk, &clockGenerator::clockSignal, &router1, &Router::processPacketsOnSignal);
-    QObject::connect(&clk, &clockGenerator::clockSignal, &router2, &Router::processPacketsOnSignal);
-    QObject::connect(&clk, &clockGenerator::clockSignal, &router3, &Router::processPacketsOnSignal);
-
-
+    cluster.createStarTopology(&clk,&cmndr);
     thread1.start();
     thread2.start();
     thread3.start();
-    thread4.start();
-    QtConcurrent::run(&clockGenerator::startGeneration, &clk);
-    QtConcurrent::run(&Router::createPacket, &router1,0);
 
+    QtConcurrent::run(&clockGenerator::startGeneration, &clk);
+    QtConcurrent::run(&Cluster::startRouting, &cluster);
+    QtConcurrent::run(&CommandReader::readCommands, &cmndr);
     return a.exec();
 }

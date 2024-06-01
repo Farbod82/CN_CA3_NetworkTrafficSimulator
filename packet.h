@@ -11,6 +11,8 @@ public:
     void setNextHopPort(int _port);
     std::string getBody();
     void setBody(std::string _body);
+    std::string getType();
+    virtual ~Packet(){}
 private:
     std::string Type;
     std::string dest_addr;

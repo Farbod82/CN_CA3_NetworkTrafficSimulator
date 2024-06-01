@@ -11,6 +11,9 @@ void RipPacket::addRoute(QHash<std::string, int> _routing){
     routing = _routing;
 }
 
+QHash<std::string, int> RipPacket::getRoute(){
+    return routing;
+}
 
 
 

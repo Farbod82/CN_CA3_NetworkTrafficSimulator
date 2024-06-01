@@ -11,6 +11,8 @@ QT += concurrent
 SOURCES += \
         buffer.cpp \
         clockgenerator.cpp \
+        cluster.cpp \
+        commandreader.cpp \
         main.cpp \
         node.cpp \
         packet.cpp \
@@ -25,6 +27,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     buffer.h \
     clockgenerator.h \
+    cluster.h \
+    commandreader.h \
     node.h \
     packet.h \
     rippacket.h \

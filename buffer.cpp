@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include <iostream>
 
 Buffer::Buffer(int _id,QObject *parent)
     : QObject{parent}
@@ -23,6 +24,7 @@ void Buffer::sendPacket(){
     if (!outBuffer.empty()){
         std::shared_ptr<Packet> poppedSharedPtr = outBuffer.back();
         outBuffer.pop_back();
+        // std::cout << "bro" <<std::endl;
         emit sendPacketSignal(poppedSharedPtr);
     }
 }
