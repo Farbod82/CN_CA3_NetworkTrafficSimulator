@@ -18,7 +18,8 @@ SOURCES += \
         ospfpacket.cpp \
         packet.cpp \
         rippacket.cpp \
-        router.cpp
+        router.cpp \
+        routingtable.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -34,4 +35,5 @@ HEADERS += \
     ospfpacket.h \
     packet.h \
     rippacket.h \
-    router.h
+    router.h \
+    routingtable.h
