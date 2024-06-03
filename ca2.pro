@@ -15,6 +15,7 @@ SOURCES += \
         commandreader.cpp \
         main.cpp \
         node.cpp \
+        ospfpacket.cpp \
         packet.cpp \
         rippacket.cpp \
         router.cpp
@@ -30,6 +31,7 @@ HEADERS += \
     cluster.h \
     commandreader.h \
     node.h \
+    ospfpacket.h \
     packet.h \
     rippacket.h \
     router.h

@@ -1,8 +1,8 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
-#include "commandReader.h"
-#include "clockGenerator.h"
+#include "commandreader.h"
+#include "clockgenerator.h"
 #include "router.h"
 #include <QObject>
 

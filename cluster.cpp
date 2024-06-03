@@ -1,4 +1,4 @@
-#include "CommandReader.h"
+#include "commandreader.h"
 #include "clockgenerator.h"
 #include "cluster.h"
 #include <QThread>

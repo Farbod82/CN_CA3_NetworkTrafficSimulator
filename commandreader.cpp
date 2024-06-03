@@ -1,4 +1,4 @@
-#include "CommandReader.h"
+#include "commandreader.h"
 #include <QThread>
 #include <iostream>
 #include <string>
