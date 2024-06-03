@@ -6,11 +6,12 @@
 #include <bits/shared_ptr.h>
 #include <string>
 
+#include "routingtable.h"
 
 
 
 
-Router::Router(int _id,std::string _ip,int _AS,QObject *parent)
+Router::Router(int _id, std::string _ip, int _AS, QObject *parent = nullptr)
     : Node{_id,parent}
 {
     AS = _AS;
@@ -22,6 +23,7 @@ Router::Router(int _id,std::string _ip,int _AS,QObject *parent)
         Buffer* buffer = new Buffer(i);
         ports.push_back(buffer);
     }
+    lsdb = new LSDB(ip);
 }
 
 
@@ -38,9 +40,13 @@ void Router::processPacketsOnSignal(){
 
 void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     // std::cout << "router " << id << " got packet " << packet.get()->getBody() << " on port " << inputPort << std::endl;
-    auto rip = std::dynamic_pointer_cast<RipPacket>(packet);
     if (packet->getType().compare("RIP") == 0){
+        auto rip = std::dynamic_pointer_cast<RipPacket>(packet);
         processRipPacket(rip, inputPort);
+    }
+    else if (packet->getType().compare("OSPF") == 0){
+        auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
+        processOspfPacket(ospf, inputPort);
     }
 }
 
@@ -64,6 +70,14 @@ void Router::StartRIPProtocol(){
     std::shared_ptr<RipPacket> packet = std::make_shared<RipPacket>("",ip);
     packet->addRoute(distanceVector);
     broadCast(packet);
+}
+
+// void Router::StartOSPFProtocol(){
+
+// }
+
+void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet,int inPort){
+
 }
 
 void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){

@@ -1,16 +1,10 @@
 #include "routingtable.h"
 
-RoutingTable::RoutingTable() {
-
-    destAddr = new std::vector<>();
-    subnectMask = new std::vector<>();
-    gateWayMask = new std::vector<>();
-    interfacePort = new std::vector<>();
-    metric = new std::vector<>();
-    protocol = new std::vector<>();
+RoutingTable::RoutingTable(std::string _ip){
+    routerIp = _ip;
 }
 
-int RoutingTable::getOutputPort(std::string _destination, int _protocol){
+int RoutingTable::getOutputPort(std::string _destination, std::string _protocol){
     for (int i = 0; i < destAddr.size(); i++){
         if (destAddr[i] == _destination &&
             protocol[i] == _protocol){
@@ -18,21 +12,32 @@ int RoutingTable::getOutputPort(std::string _destination, int _protocol){
         }
     }
     
-    return null;
+    return NO_WAY;
+}
+
+int RoutingTable::getDestinationCost(std::string _destination, std::string _protocol){
+    for (int i = 0; i < destAddr.size(); i++){
+        if (destAddr[i] == _destination &&
+            protocol[i] == _protocol){
+            return metric[i];
+        }
+    }
+
+    return NO_WAY;
 }
 
 bool RoutingTable::insertRow(std::string dest, std::string subMask,
               std::string gate, int port, int metr, std::string prot){
-    if (getOutputPort(dest) != null){
+    if (getOutputPort(dest, "OSPF") != NO_WAY){
         return false;
     }
     else{
         destAddr.push_back(dest);
-        subnectMask.push_back(subMask);
-        GateWayMask.push_back(gate);
+        subnetMask.push_back(subMask);
+        gateWayMask.push_back(gate);
         interfacePort.push_back(port);
-        Metric.push_back(metr);
-        Protocol.push_back(prot);
+        metric.push_back(metr);
+        protocol.push_back(prot);
         return true;
     }
 }
@@ -40,9 +45,9 @@ bool RoutingTable::insertRow(std::string dest, std::string subMask,
 bool RoutingTable::editRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
               std::string gate, int port, int metr, std::string prot){
     for (int i = 0; i < destAddr.size(); i++){
-        if (destAddr[i] == destination &&
+        if (destAddr[i] == dest &&
             protocol[i] == prot){
-            subnectMask[i] = subMask;
+            subnetMask[i] = subMask;
             gateWayMask[i] = gate;
             interfacePort[i] = port;
             metric[i] = metr;
@@ -53,7 +58,7 @@ bool RoutingTable::editRowBaseOneDestinationAndProtocol(std::string dest, std::s
 }
 
 
-bool RoutingTable::removeRow(std::string _destination, int _protocol){
+bool RoutingTable::removeRow(std::string _destination, std::string _protocol){
     for (int i = 0; i < destAddr.size(); i++){
         if (destAddr[i] == _destination &&
             protocol[i] == _protocol){
@@ -65,5 +70,19 @@ bool RoutingTable::removeRow(std::string _destination, int _protocol){
         }
     }
 
-    return null;
+    return NO_WAY;
 }
+
+
+// void RoutingTable::updateRoutingTableOSPF(LSDB* lsdb){
+//     std::string destination;
+//     for (int i = 0; i < destAddr.size(); i++) {
+//         destination = destAddr[i];
+//         if (lsdb[routerIp].containsKey(destination)){
+//             if (lsdb[routerIp][destination] < getDestinationCost(destination, "OSPF")){
+
+//             }
+//         }
+//     }
+
+// }

@@ -17,6 +17,7 @@ private:
     int clusterNumber;
     std::vector<Router*> routers;
     std::vector<QThread*> threads;
+    void connectTwoRouter(Router* r1, Router* r2);
 signals:
 };
 

@@ -10,6 +10,9 @@ Cluster::Cluster(int _clusterNumber,QObject *parent)
     clusterNumber = _clusterNumber;
 }
 
+void Cluster::connectTwoRouter(Router* r1, Router* r2){
+
+}
 
 void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     std::vector<std::string> ipList = {"192.168.1.1","192.168.1.2","192.168.1.3","192.168.1.4"
@@ -23,7 +26,7 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, routers[0], &Router::commandSlot);
     QObject::connect(clk, &clockGenerator::clockSignal, routers[0], &Router::processPacketsOnSignal);
     for(int i = 1; i  < 8 ; i++){
-        Router* router = new Router(i,ipList[i],clusterNumber);
+        Router* router = new Router(i, ipList[i], clusterNumber);
         QThread* thread = new QThread();
         routers.push_back(router);
         threads.push_back(thread);
