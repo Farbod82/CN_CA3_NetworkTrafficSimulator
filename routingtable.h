@@ -2,9 +2,15 @@
 #define ROUTINGTABLE_H
 
 #include <QObject>
-#include "lsbd.h"
+#include "lsdb.h"
 
 const int NO_WAY = -1;
+
+typedef struct DJNode {
+    std::string name;
+    int distance;
+    std::string parent;
+} DJNode;
 
 class RoutingTable: public QObject
 {
@@ -18,7 +24,9 @@ public:
     int getOutputPort(std::string, std::string);
     int getDestinationCost(std::string , std::string);
     bool removeRow(std::string _destination, std::string _protocol);
+    QHash<std::string, std::pair<std::string, int>> dijkstra(const LSDB& lsdb);
     void updateRoutingTableOSPF(LSDB* lsdb);
+    void printShortestPath(const QHash<std::string, DJNode>& dist, std::string dest);
 
 private:
     std::string routerIp;

@@ -11,7 +11,7 @@
 
 
 
-Router::Router(int _id, std::string _ip, int _AS, QObject *parent = nullptr)
+Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
     : Node{_id,parent}
 {
     AS = _AS;
@@ -24,6 +24,7 @@ Router::Router(int _id, std::string _ip, int _AS, QObject *parent = nullptr)
         ports.push_back(buffer);
     }
     lsdb = new LSDB(ip);
+    routingTable = new RoutingTable(ip);
 }
 
 

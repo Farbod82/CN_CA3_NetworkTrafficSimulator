@@ -1,5 +1,5 @@
-#ifndef LSBD_H
-#define LSBD_H
+#ifndef LSDB_H
+#define LSDB_H
 
 #include <QObject>
 #include "ospfpacket.h"
@@ -12,6 +12,8 @@ class LSDB: public QObject
 public:
     explicit LSDB(std::string);
     void updateByOspfPacket(OspfPacket* ospfPacket);
+    QHash<std::string, int> operator[] (const std::string& a) const;
+    QList<std::string> keys() const;
 
 private:
     std::string routerIp;
@@ -23,4 +25,4 @@ private:
 
 // public slots:
 
-#endif // LSBD_H
+#endif // LSDB_H

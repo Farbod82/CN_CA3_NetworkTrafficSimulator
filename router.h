@@ -3,7 +3,7 @@
 
 #include "node.h"
 #include "routingtable.h"
-#include "lsbd.h"
+#include "lsdb.h"
 #include <string>
 #include <vector>
 
@@ -46,7 +46,7 @@ private:
     QHash<std::string, int> distanceVector;
     QHash<std::string, int> shoretestPathPorts;
     LSDB* lsdb;
-    RoutingTable routingTable;
+    RoutingTable* routingTable;
 };
 
 #endif // ROUTER_H

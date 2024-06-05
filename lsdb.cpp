@@ -1,4 +1,4 @@
-#include "lsbd.h"
+#include "lsdb.h"
 #include <QObject>
 
 LSDB::LSDB(std::string _routerIp){
@@ -11,7 +11,7 @@ void LSDB::Dijkstra(){
 
 void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
     if (lastSequenceNumber.contains(ospfPacket->getSource())){
-        if (ospfPacket->getSequence() == lastSequenceNumber[ospfPacket->getSource()]){
+        if (ospfPacket->getSequence() <= lastSequenceNumber[ospfPacket->getSource()]){
             return;
         }
     }
@@ -21,7 +21,13 @@ void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
         cost[ospfPacket->getSource()][linkDests[i]] = links[linkDests[i]];
         cost[linkDests[i]][ospfPacket->getSource()] = links[linkDests[i]];
     }
+}
 
-    Dijkstra();
+QHash<std::string, int> LSDB::operator[] (const std::string& a) const{
+    return cost[a];
+}
 
+
+QList<std::string> LSDB::keys() const{
+    return cost.keys();
 }
