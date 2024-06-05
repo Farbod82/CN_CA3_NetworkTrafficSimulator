@@ -19,7 +19,7 @@ public:
     explicit RoutingTable(std::string);
     virtual ~RoutingTable();
     bool insertRow(std::string, std::string, std::string, int, int, std::string);
-    bool editRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
+    bool updateRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
                                               std::string gate, int port, int metr, std::string prot);
     int getOutputPort(std::string, std::string);
     int getDestinationCost(std::string , std::string);
@@ -36,7 +36,6 @@ private:
     std::vector<int> interfacePort;
     std::vector<int> metric;
     std::vector<std::string> protocol;
-
 
 };
 

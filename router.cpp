@@ -47,7 +47,7 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     }
     else if (packet->getType().compare("OSPF") == 0){
         auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
-        processOspfPacket(ospf, inputPort);
+        processOspfPacket(ospf);
     }
 }
 
@@ -73,12 +73,11 @@ void Router::StartRIPProtocol(){
     broadCast(packet);
 }
 
-// void Router::StartOSPFProtocol(){
-
-// }
-
-void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet,int inPort){
-
+void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet){
+    lsdb->updateByOspfPacket(packet.get());
+    routingTable->updateRoutingTableOSPF(lsdb);
+    packet.get()->decreaseTTL();
+    broadCast(packet);
 }
 
 void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){

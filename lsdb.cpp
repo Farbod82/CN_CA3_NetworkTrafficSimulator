@@ -16,7 +16,7 @@ void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
         }
     }
     Link links = ospfPacket->getLinks();
-    QList linkDests = links.keys();
+    QList<std::string> linkDests = links.keys();
     for (int i =0 ; i <linkDests.size(); i++){
         cost[ospfPacket->getSource()][linkDests[i]] = links[linkDests[i]];
         cost[linkDests[i]][ospfPacket->getSource()] = links[linkDests[i]];

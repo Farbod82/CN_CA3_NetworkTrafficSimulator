@@ -47,7 +47,7 @@ bool RoutingTable::insertRow(std::string dest, std::string subMask,
     }
 }
 
-bool RoutingTable::editRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
+bool RoutingTable::updateRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
               std::string gate, int port, int metr, std::string prot){
     for (int i = 0; i < destAddr.size(); i++){
         if (destAddr[i] == dest &&
@@ -148,13 +148,23 @@ QHash<std::string, std::pair<std::string, int>> RoutingTable::dijkstra(const LSD
 
 
 void RoutingTable::updateRoutingTableOSPF(LSDB* lsdb){
-    QHash a<std::string, int>;
     std::string destination;
+    QHash<std::string, std::pair<std::string, int>> StepCost = dijkstra(*lsdb);
     for (int i = 0; i < destAddr.size(); i++) {
         destination = destAddr[i];
-        if (lsdb[routerIp].contains(destination)){
-            if (lsdb[routerIp][destination] < getDestinationCost(destination, "OSPF")){
-
+        if ((*lsdb)[routerIp].contains(destination)){
+            if ((*lsdb)[routerIp][destination] < getDestinationCost(destination, "OSPF")){
+                updateRowBaseOneDestinationAndProtocol(
+                    destination,
+                    subnetMask[i],
+                    StepCost[destination].first,
+                    interfacePort[i],
+                    StepCost[destination].second,
+                    protocol[i]
+                    );
+            }
+            else{
+                removeRow(destination, protocol[i]);
             }
         }
     }
