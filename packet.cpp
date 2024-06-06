@@ -1,7 +1,7 @@
 #include "packet.h"
 #include <iostream>
 
-Packet::Packet(std::string _dest_addr, std::string _source_addr,std::string _Type = "packet", IPVersion _ipv = IPV_4) {
+Packet::Packet(std::string _dest_addr, std::string _source_addr,std::string _Type = "packet", IPVersion _ipv) {
     dest_addr = _dest_addr;
     source_addr = _source_addr;
     Type = _Type;
@@ -52,7 +52,7 @@ bool Packet::changeToIPV6(){
     if (ipv == IPV_6){
         return false;
     }
-    packet = this;
+    ipv6Packet = this;
     encapsulated = true;
     return true;
 }

@@ -13,7 +13,7 @@ typedef enum IPVersion{
 class Packet
 {
 public:
-    Packet(std::string _dest_addr, std::string _source_addr, std::string Type, IPVersion _ipv);
+    Packet(std::string _dest_addr, std::string _source_addr, std::string Type, IPVersion _ipv = IPV_4);
     void setNextHopPort(int _port);
     std::string getBody();
     void setBody(std::string _body);

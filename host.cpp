@@ -54,3 +54,7 @@ void Host::receivePackets(){
         std::cout << packet.get()->getSource() << std::endl;
     }
 }
+
+std::string Host::getIp(){
+    return ip;
+}

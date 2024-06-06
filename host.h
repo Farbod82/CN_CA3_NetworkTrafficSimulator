@@ -5,8 +5,6 @@
 #include <QObject>
 #include <random>
 
-const int NUMBER_OF_PORTS = 5;
-
 class Host : public QObject
 {
     Q_OBJECT
@@ -16,6 +14,7 @@ public:
     void createAndSendPacket();
     double pareto_distribution();
     Buffer* port;
+    std::string getIp();
 
 private:
     double alpha, xm;

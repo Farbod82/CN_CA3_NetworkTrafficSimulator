@@ -12,7 +12,7 @@
 #include <QHash>
 
 
-#define NUMBER_OF_PORTS 5
+const int NUMBER_OF_PORTS = 5;
 
 typedef enum RoutingProtocol{
     RIP,

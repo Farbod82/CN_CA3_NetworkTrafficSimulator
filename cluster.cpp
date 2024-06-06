@@ -26,7 +26,7 @@ Cluster::Cluster(int _clusterNumber,QObject *parent)
 void Cluster::connectHost(Router* rt, int rp, Host* ht){
     QObject::connect(rt->ports[rp], &Buffer::sendPacketSignal, ht->port, &Buffer::recievePacket);
     QObject::connect(ht->port, &Buffer::sendPacketSignal, rt->ports[rp], &Buffer::recievePacket);
-    rt->setNeighbor(p1, r2->getIp());
+    rt->setNeighbor(rp, ht->getIp());
 }
 
 void Cluster::connectTwoRouters(Router* r1, int p1, Router* r2, int p2){
