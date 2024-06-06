@@ -32,7 +32,7 @@ public:
 
     void processPackets(std::shared_ptr<Packet> packet, int inputPort);
     void processOspfPacket(std::shared_ptr<OspfPacket> packet, int inPort);
-    void broadCast(std::shared_ptr<Packet> packet);
+    void broadCast(std::shared_ptr<Packet> packet, RoutingProtocol rp = RIP);
     void StartRIPProtocol();
     void StartOSPFProtocol();
     void processRipPacket(std::shared_ptr<RipPacket> packet, int inPort);

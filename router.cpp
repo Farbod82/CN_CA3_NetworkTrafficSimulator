@@ -58,17 +58,25 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     }
 }
 
-void Router::broadCast(std::shared_ptr<Packet> packet){
-    for(int i =0; i < NUMBER_OF_PORTS; i++){
-        ports[i]->addToOutBuffer(packet);
+void Router::broadCast(std::shared_ptr<Packet> packet, RoutingProtocol rp){
+    if (rp == OSPF){
+        auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
+        for(int i =0; i < NUMBER_OF_PORTS; i++){
+            ports[i]->addToOutBuffer(ospf.get()->copy());
+        }
+    }
+    else{
+        for(int i =0; i < NUMBER_OF_PORTS; i++){
+            ports[i]->addToOutBuffer(packet);
+        }
     }
 }
 
 void Router::StartOSPFProtocol(){
-    Link links;
+    Link* links = new Link();
     for (auto dest : neighbors.values()){
         if (dest.compare("") != 0)
-            links[dest] = 1;
+            (*links)[dest] = 1;
     }
     std::shared_ptr<OspfPacket> packet = std::make_shared<OspfPacket>(ip, links);
     broadCast(packet);
@@ -89,7 +97,7 @@ void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet, int inPort){
     routingTable->updateRoutingTableOSPF(lsdb, inPort);
     if (packet.get()->getTTL() > 0){
         packet.get()->decreaseTTL();
-        broadCast(packet);
+        broadCast(packet, OSPF);
     }
 }
 

@@ -14,10 +14,12 @@ public:
     std::string getType();
     std::string getSource();
     virtual ~Packet(){}
+
+protected:
+    std::string source_addr;
 private:
     std::string Type;
     std::string dest_addr;
-    std::string source_addr;
     int nextHopPort;
     std::string body;
 };

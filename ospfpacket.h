@@ -10,17 +10,17 @@ typedef QHash<std::string, int> Link;
 class OspfPacket : public Packet
 {
 public:
-    OspfPacket(std::string _source_addr, Link _link);
+    OspfPacket(std::string _source_addr, Link* _link);
     void decreaseTTL();
     int getTTL();
     int getSequence();
     Link getLinks();
-    OspfPacket* copy();
+    std::shared_ptr<OspfPacket> copy();
 
 private:
     int sequence = 0;
-    int ttl = 10;
-    Link links;
+    int ttl = 7;
+    Link* links;
 public slots:
     void incSequence();
 };
