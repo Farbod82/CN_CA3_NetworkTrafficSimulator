@@ -81,6 +81,17 @@ bool RoutingTable::insertRow(std::string dest, std::string subMask,
 }
 
 
+
+std::vector<std::string> RoutingTable::createEbgpVector(std::string prot){
+    std::vector<std::string> ebgpVector;
+    for (int i =0; i < destAddr.size(); i++){
+        if(protocol[i] == prot){
+            ebgpVector.push_back(destAddr[i]);
+        }
+    }
+    return ebgpVector;
+}
+
 bool RoutingTable::updateRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
               std::string gate, int port, int metr, std::string prot){
     for (int i = 0; i < destAddr.size(); i++){
@@ -131,6 +142,17 @@ void RoutingTable::printShortestPath(const QHash<std::string, DJNode>& dist, std
         path.pop();
     }
     std::cout << "END" << std::endl;
+}
+
+
+QHash<std::string,int> RoutingTable::createRipDistanceVector(){
+    QHash<std::string,int> distanceVector;
+    for (int i = 0; i < destAddr.size(); i++){
+        if(protocol[i] == "RIP"){
+            distanceVector[destAddr[i]] = metric[i];
+        }
+    }
+    return distanceVector;
 }
 
 std::pair<std::string, int> getFirstStepAndTotalCost(const QHash<std::string, DJNode>& dist, const std::string& dest) {

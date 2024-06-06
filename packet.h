@@ -15,9 +15,11 @@ public:
     std::string getType();
     std::string getSource();
     void addASNumber(int _AS);
+    int getInitialASNumber();
 
 
     virtual ~Packet(){}
+    std::string getDest();
 private:
     std::string Type;
     std::vector<int> ASNumbers;

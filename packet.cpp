@@ -1,9 +1,22 @@
 #include "packet.h"
+#include <iostream>
 
 Packet::Packet(std::string _dest_addr, std::string _source_addr,std::string _Type = "packet") {
     dest_addr = _dest_addr;
     source_addr = _source_addr;
     Type = _Type;
+}
+
+
+int Packet::getInitialASNumber(){
+    if (ASNumbers.empty()){
+        std::cout << "ooooooooooooooooooooooooooh no set AS for you packets"<< std::endl;
+    }
+    return ASNumbers[0];
+}
+
+std::string Packet::getDest(){
+    return dest_addr;
 }
 
 

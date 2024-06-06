@@ -114,12 +114,21 @@ void Cluster::addStarToMesh(Cluster* starCluster){
 
     QObject::connect(routers[7]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[6]->ports[4], &Buffer::recievePacket);
     QObject::connect(starCluster->routers[0]->ports[4], &Buffer::sendPacketSignal, routers[11]->ports[4], &Buffer::recievePacket);
+    routers[7]->setAsBorder();
+    starCluster->routers[6]->setAsBorder();
 
     QObject::connect(routers[11]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[0]->ports[4], &Buffer::recievePacket);
     QObject::connect(starCluster->routers[0]->ports[4], &Buffer::sendPacketSignal, routers[11]->ports[4], &Buffer::recievePacket);
 
+    routers[11]->setAsBorder();
+    starCluster->routers[0]->setAsBorder();
+
+
     QObject::connect(routers[15]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[1]->ports[4], &Buffer::recievePacket);
     QObject::connect(starCluster->routers[1]->ports[4], &Buffer::sendPacketSignal, routers[15]->ports[4], &Buffer::recievePacket);
+
+    routers[15]->setAsBorder();
+    starCluster->routers[1]->setAsBorder();
 }
 
 void Cluster::startRouting(){

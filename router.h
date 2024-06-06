@@ -39,12 +39,19 @@ public:
     void printRoutingTable();
     void setNeighbor(int port, std::string neighbor);
     std::string getIp();
+    void setAsBorder();
+    void processBGP(std::shared_ptr<Packet> packet, int inputPort);
+    void StartEBGP(std::string routingProt);
+    QHash<std::string,std::string> BGPTable;
+    bool DoesBGPTableContain(std::string prefix);
+    void forwardPacket(std::shared_ptr<Packet> packet, int inputPort);
 public slots:
     void commandSlot(std::string command);
     void processPacketsOnSignal();
     // void ospfBroadCastLinkCostChange();
     // void changeRoutingProtocol(RoutingProtocol _rp);
 private:
+    bool isBorder;
     int id;
     int AS;
     std::string ip;

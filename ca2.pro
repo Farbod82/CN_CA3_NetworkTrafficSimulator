@@ -13,6 +13,7 @@ SOURCES += \
         clockgenerator.cpp \
         cluster.cpp \
         commandreader.cpp \
+        ebgppacket.cpp \
         lsdb.cpp \
         main.cpp \
         node.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     clockgenerator.h \
     cluster.h \
     commandreader.h \
+    ebgppacket.h \
     lsdb.h \
     node.h \
     ospfpacket.h \

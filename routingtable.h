@@ -31,9 +31,8 @@ public:
     void setDestinationCost(std::string _destination, std::string _protocol, int newCost);
     void setOutputPort(std::string _destination, std::string _protocol, int newPort);    
     friend std::ostream& operator<< (std::ostream& stream, const RoutingTable& rt);
-
-
-
+    QHash<std::string, int> createRipDistanceVector();
+    std::vector<std::string> createEbgpVector(std::string prot);
 private:
     std::string routerIp;
     std::vector<std::string> destAddr;
