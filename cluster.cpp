@@ -67,6 +67,10 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     connectTwoRouters(router, 2, routers[4], 2);
     connectTwoRouters(router, 3, routers[6], 2);
 
+    for (int i =0; i < routers.size(); i++){
+        routers[i]->setibgpIps({"192.168.1.1","192.168.1.2","192.168.1.7"});
+    }
+
 
     std::vector<std::string> host_ip = {"192.168.101", "192.168.102"};
     Host* h1 = new Host (host_ip[0], 0.1, 0.1, clusterNumber);
@@ -120,11 +124,14 @@ void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
             QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, router, &Router::commandSlot);
         }
     }
+    for (int i =0; i < routers.size(); i++){
+        routers[i]->setibgpIps({"192.168.1.16","192.168.1.20","192.168.1.24"});
+    }
+
 }
 
 
 void Cluster::addStarToMesh(Cluster* starCluster){
-
 
     connectTwoRouters(routers[7], 4, starCluster->routers[6], 4);
     routers[7]->setAsBorder();
