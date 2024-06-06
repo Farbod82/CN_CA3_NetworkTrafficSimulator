@@ -1,7 +1,7 @@
 #include <QCoreApplication>
-#include "clockGenerator.h"
+#include "clockgenerator.h"
 
-#include "CommandReader.h"
+#include "commandreader.h"
 #include "cluster.h"
 #include "router.h"
 #include <qthread.h>

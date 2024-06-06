@@ -1,8 +1,8 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
-#include "commandReader.h"
-#include "clockGenerator.h"
+#include "commandreader.h"
+#include "clockgenerator.h"
 #include "router.h"
 #include <QObject>
 
@@ -17,9 +17,14 @@ public:
     void createMeshTopology(clockGenerator *clk, CommandReader *cmdr);
 private:
     int clusterNumber;
+    RoutingProtocol routingProtocol;
     std::vector<Router*> routers;
     std::vector<QThread*> threads;
-signals:
+    void connectTwoRouters(Router* r1, int p1, Router* r2, int p2);
+    // void connectChangeRoutingProtocolSignal();
+
+// signals:
+//     void changeRoutingProtocol(RoutingProtocol _rp);
 };
 
 #endif // CLUSTER_H

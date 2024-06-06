@@ -12,6 +12,7 @@ public:
     std::string getBody();
     void setBody(std::string _body);
     std::string getType();
+    std::string getSource();
     virtual ~Packet(){}
 private:
     std::string Type;

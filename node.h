@@ -1,7 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "Packet.h"
+#include "packet.h"
 #include <QObject>
 #include <string>
 

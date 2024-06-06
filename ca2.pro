@@ -13,11 +13,14 @@ SOURCES += \
         clockgenerator.cpp \
         cluster.cpp \
         commandreader.cpp \
+        lsdb.cpp \
         main.cpp \
         node.cpp \
+        ospfpacket.cpp \
         packet.cpp \
         rippacket.cpp \
-        router.cpp
+        router.cpp \
+        routingtable.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -29,7 +32,10 @@ HEADERS += \
     clockgenerator.h \
     cluster.h \
     commandreader.h \
+    lsdb.h \
     node.h \
+    ospfpacket.h \
     packet.h \
     rippacket.h \
-    router.h
+    router.h \
+    routingtable.h
