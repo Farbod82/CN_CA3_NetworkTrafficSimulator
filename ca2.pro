@@ -15,6 +15,7 @@ SOURCES += \
         commandreader.cpp \
         host.cpp \
         ebgppacket.cpp \
+        ibgppacket.cpp \
         lsdb.cpp \
         main.cpp \
         node.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     commandreader.h \
     host.h \
     ebgppacket.h \
+    ibgppacket.h \
     lsdb.h \
     node.h \
     ospfpacket.h \

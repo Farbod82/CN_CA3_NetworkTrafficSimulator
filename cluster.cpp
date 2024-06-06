@@ -126,30 +126,25 @@ void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
 
 void Cluster::addStarToMesh(Cluster* starCluster){
 
-    QObject::connect(routers[7]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[6]->ports[4], &Buffer::recievePacket);
-    QObject::connect(starCluster->routers[0]->ports[4], &Buffer::sendPacketSignal, routers[11]->ports[4], &Buffer::recievePacket);
+
+    connectTwoRouters(routers[7], 4, starCluster->routers[6], 4);
     routers[7]->setAsBorder();
     starCluster->routers[6]->setAsBorder();
 
-    QObject::connect(routers[11]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[0]->ports[4], &Buffer::recievePacket);
-    QObject::connect(starCluster->routers[0]->ports[4], &Buffer::sendPacketSignal, routers[11]->ports[4], &Buffer::recievePacket);
-
+    connectTwoRouters(routers[11], 4, starCluster->routers[0], 4);
     routers[11]->setAsBorder();
     starCluster->routers[0]->setAsBorder();
 
-
-    QObject::connect(routers[15]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[1]->ports[4], &Buffer::recievePacket);
-    QObject::connect(starCluster->routers[1]->ports[4], &Buffer::sendPacketSignal, routers[15]->ports[4], &Buffer::recievePacket);
-
+    connectTwoRouters(routers[15], 4, starCluster->routers[1], 4);
     routers[15]->setAsBorder();
     starCluster->routers[1]->setAsBorder();
 }
 
 void Cluster::startRouting(){
-    // QtConcurrent::run(&Router::StartRIPProtocol, routers[0]);
-    for (int i = 0; i < routers.size(); ++i) {
-        QtConcurrent::run(&Router::StartOSPFProtocol, routers[i]);
-    }
+    QtConcurrent::run(&Router::StartRIPProtocol, routers[0]);
+    // for (int i = 0; i < routers.size(); ++i) {
+    //     QtConcurrent::run(&Router::StartOSPFProtocol, routers[i]);
+    // }
     // QThread::sleep(1);
     // for (int i =0; i < 8; i++){
     //     routers[i]->printRoutingTable();

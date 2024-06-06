@@ -44,14 +44,14 @@ void Host::parteoSendPacket(){
     double pareto = pareto_distribution();
     double random = rand();
     if (random < pareto){
-        createAndSendPacket();
+        // createAndSendPacket();
     }
 }
 
 void Host::receivePackets(){
     std::shared_ptr<Packet> packet = port->getFirstPacket();
     if (packet.get() != nullptr){
-        std::cout << packet.get()->getSource() << std::endl;
+        // std::cout << packet.get()->getSource() << std::endl;
     }
 }
 

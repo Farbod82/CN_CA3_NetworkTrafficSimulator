@@ -8,7 +8,7 @@
 #include <string>
 
 #include "routingtable.h"
-
+#include "ibgppacket.h"
 
 
 Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
@@ -75,6 +75,11 @@ void Router::processBGP(std::shared_ptr<Packet> packet,int inputPort){
     }
 }
 
+void Router::sendToOtherAS(std::shared_ptr<IBPGPacket> packet){
+    packet->setPacketDestination(packet->getFinalDest());
+    ports[4]->addToOutBuffer(packet);
+}
+
 void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     // std::cout << "router " << id << " got packet " << packet.get()->getBody() << " on port " << inputPort << std::endl;
     if (packet->getType().compare("RIP") == 0){
@@ -88,26 +93,64 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     else if (packet->getType().compare("EBGP") == 0){
 
     }
-    else if(packet->getType().compare("IBGP") == 0){
-         //todo
+    else if(packet->getType().compare("IBGP") == 0 && isBorder && packet->getInitialASNumber() != AS){
+        auto ibgp = std::dynamic_pointer_cast<IBPGPacket>(packet);
+        sendToOtherAS(ibgp);
     }
     else{
         forwardPacket(packet,inputPort);
     }
 }
 
+
+
+void Router::setibgpIps(std::vector<std::string> _ips){
+    for (int i =0; i < _ips.size(); i++){
+        ibgpIps.push_back(_ips[i]);
+    }
+}
+
+
+std::string Router::findShortestIBGP(){
+    int shortestCost = 1000;
+    std::string shortestIp = "";
+    std::string prot;
+    if (routingProtocl == RIP){
+        prot = "RIP";
+    }
+    else{
+        prot = "OSPF";
+    }
+
+    for(int i =0 ; i < ibgpIps.size();i++){
+        if (routingTable->getDestinationCost(ibgpIps[i],prot) < shortestCost){
+            shortestCost = routingTable->getDestinationCost(ibgpIps[i],prot);
+            shortestIp = ibgpIps[i];
+        }
+    }
+    return shortestIp;
+}
+
+
 void Router::forwardPacket(std::shared_ptr<Packet> packet,int inputPort){
     std::string forwIp = packet->getDest();
     int nextPort = NO_WAY;
+    std::string prot;
     if (routingProtocl == RIP){
         nextPort = routingTable->getOutputPort(forwIp,"RIP");
+        prot = "RIP";
     }
     else if ( routingProtocl == OSPF){
         routingTable->getOutputPort(forwIp,"OSPF");
+        prot = "OSPF";
     }
 
     if (nextPort == NO_WAY){
-           //do ibgp
+        std::shared_ptr<IBPGPacket> ibgpPacket = std::make_shared<IBPGPacket>("",packet->getSource());
+        std::string bgpIp = findShortestIBGP();
+        ibgpPacket->setPacketDestination(bgpIp);
+        ibgpPacket->setfinalDest(packet->getDest());
+        ports[routingTable->getOutputPort(bgpIp,prot)]->addToOutBuffer(ibgpPacket);
     }
     else{
         ports[nextPort]->addToOutBuffer(packet);
