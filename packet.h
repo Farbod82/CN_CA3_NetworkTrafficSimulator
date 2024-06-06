@@ -18,11 +18,13 @@ public:
 
 
     virtual ~Packet(){}
+
+protected:
+    std::string source_addr;
 private:
     std::string Type;
     std::vector<int> ASNumbers;
     std::string dest_addr;
-    std::string source_addr;
     int nextHopPort;
     std::string body;
 };

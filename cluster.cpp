@@ -85,9 +85,7 @@ void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
         threads.push_back(thread1);
         router1->moveToThread(thread1);
         if (i != 0){
-            QObject::connect(router1->ports[3], &Buffer::sendPacketSignal, routers[(i-1)*4]->ports[2], &Buffer::recievePacket);
-            QObject::connect(routers[(i-1)*4]->ports[2], &Buffer::sendPacketSignal, router1->ports[3], &Buffer::recievePacket);
-
+            connectTwoRouters(router1, 3, routers[(i-1)*4], 2);
         }
         QObject::connect(clk, &clockGenerator::clockSignal, router1, &Router::processPacketsOnSignal);
         QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, router1, &Router::commandSlot);
@@ -98,11 +96,9 @@ void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
             threads.push_back(thread);
             router->moveToThread(thread);
             if (i != 0){
-                QObject::connect(router->ports[3], &Buffer::sendPacketSignal, routers[((i-1)*4)+j]->ports[2], &Buffer::recievePacket);
-                QObject::connect(routers[((i-1)*4)+j]->ports[2], &Buffer::sendPacketSignal, router->ports[3], &Buffer::recievePacket);
+                connectTwoRouters(router, 3, routers[((i-1)*4)+j], 2);
             }
-            QObject::connect(router->ports[1], &Buffer::sendPacketSignal, routers[((i)*4)+j-1]->ports[0], &Buffer::recievePacket);
-            QObject::connect(routers[((i)*4)+j-1]->ports[0], &Buffer::sendPacketSignal, router->ports[1], &Buffer::recievePacket);
+            connectTwoRouters(router, 1, routers[((i)*4)+j-1], 0);
             QObject::connect(clk, &clockGenerator::clockSignal, router, &Router::processPacketsOnSignal);
             QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, router, &Router::commandSlot);
         }
@@ -123,8 +119,10 @@ void Cluster::addStarToMesh(Cluster* starCluster){
 }
 
 void Cluster::startRouting(){
-    QtConcurrent::run(&Router::StartRIPProtocol, routers[0]);
-    // QtConcurrent::run(&Router::StartOSPFProtocol, routers[0]);
+    // QtConcurrent::run(&Router::StartRIPProtocol, routers[0]);
+    for (int i = 0; i < routers.size(); ++i) {
+        QtConcurrent::run(&Router::StartOSPFProtocol, routers[i]);
+    }
     // QThread::sleep(1);
     // for (int i =0; i < 8; i++){
     //     routers[i]->printRoutingTable();

@@ -13,6 +13,7 @@ public:
     void updateByOspfPacket(OspfPacket* ospfPacket);
     QHash<std::string, int> operator[] (const std::string& a) const;
     QList<std::string> keys() const;
+    bool oldSequence(OspfPacket* ospfPacket);
 
 private:
     Edges cost;
