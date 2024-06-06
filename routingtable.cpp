@@ -4,6 +4,7 @@
 #include <vector>
 #include <stack>
 #include <iostream>
+#include <iomanip>
 
 RoutingTable::RoutingTable(std::string _ip, QObject* parrent)
     :QObject{parrent}{
@@ -203,4 +204,25 @@ void RoutingTable::updateRoutingTableOSPF(const LSDB& lsdb){
         }
     }
 
+}
+
+std::ostream& operator<< (std::ostream& stream, const RoutingTable& rt) {
+    // Print table header
+    stream << "Routing Table for Router: " << rt.routerIp << std::endl;
+    stream << std::left << std::setw(20) << "Destination" << std::left << std::setw(20) << "Subnet Mask"
+           << std::left << std::setw(20) << "Gateway" << std::left << std::setw(15) << "Port"
+           << std::left << std::setw(10) << "Metric" << std::left << std::setw(20) << "Protocol" << std::endl;
+    stream << std::string(100, '-') << std::endl;
+
+    // Print each row of data
+    for (int i = 0; i < rt.destAddr.size(); ++i) {
+        stream << std::left << std::setw(20) << rt.destAddr[i]
+               << std::left << std::setw(20) << rt.subnetMask[i]
+               << std::left << std::setw(20) << rt.gateWayMask[i]
+               << std::left << std::setw(15) << rt.interfacePort[i]
+               << std::left << std::setw(10) << rt.metric[i]
+               << std::left << std::setw(20) << rt.protocol[i] << std::endl;
+    }
+
+    return stream;
 }

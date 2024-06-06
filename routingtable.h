@@ -29,7 +29,11 @@ public:
     void printShortestPath(const QHash<std::string, DJNode>& dist, std::string dest);
     bool hasDestIP(std::string _destination);
     void setDestinationCost(std::string _destination, std::string _protocol, int newCost);
-    void setOutputPort(std::string _destination, std::string _protocol, int newPort);
+    void setOutputPort(std::string _destination, std::string _protocol, int newPort);    
+    friend std::ostream& operator<< (std::ostream& stream, const RoutingTable& rt);
+
+
+
 private:
     std::string routerIp;
     std::vector<std::string> destAddr;
