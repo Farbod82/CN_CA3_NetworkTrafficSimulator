@@ -102,8 +102,8 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
 
     }
     else if(packet->getType().compare("IBGP") == 0 && isBorder && packet->getInitialASNumber() != AS){
-        auto ibgp = std::dynamic_pointer_cast<IBPGPacket>(packet);
-        sendToOtherAS(ibgp);
+        // auto ibgp = std::dynamic_pointer_cast<IBPGPacket>(packet);
+        // sendToOtherAS(ibgp);
     }
     else{
         forwardPacket(packet,inputPort);
@@ -262,9 +262,6 @@ void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
         if (isBorder){
             StartEBGP("RIP");
         }
-        // std::cout << "-----------------------------------------" <<std::endl;
-        // printRoutingTable();
-        // std::cout << "-----------------------------------------" <<std::endl;
     }
 }
 
