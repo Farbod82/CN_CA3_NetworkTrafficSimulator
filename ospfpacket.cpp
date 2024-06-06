@@ -1,6 +1,6 @@
 #include "ospfpacket.h"
 
-OspfPacket::OspfPacket(std::string _source_addr, Link _link, QObject *parent = nullptr):Packet("broadcast",_source_addr,"OSPF") {
+OspfPacket::OspfPacket(std::string _source_addr, Link _link):Packet("broadcast",_source_addr,"OSPF") {
     links = _link;
 }
 

@@ -11,6 +11,14 @@
 
 
 
+std::string Router::getIp(){
+    return ip;
+}
+
+void Router::setNeighbor(int port, std::string neighbor){
+    neighbors[port] = neighbor;
+}
+
 Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
     : Node{_id,parent}
 {
@@ -22,8 +30,9 @@ Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
     for(int i =0; i < NUMBER_OF_PORTS; i++){
         Buffer* buffer = new Buffer(i);
         ports.push_back(buffer);
+        neighbors[i] = "";
     }
-    lsdb = new LSDB(ip);
+    lsdb = new LSDB();
     routingTable = new RoutingTable(ip);
 }
 
@@ -67,6 +76,15 @@ void Router::broadCast(std::shared_ptr<Packet> packet){
     }
 }
 
+void Router::StartOSPFProtocol(){
+    Link links;
+    for (auto dest : neighbors.values()){
+        links[dest] = 1;
+    }
+    std::shared_ptr<OspfPacket> packet = std::make_shared<OspfPacket>(ip, links);
+    broadCast(packet);
+}
+
 void Router::StartRIPProtocol(){
     std::shared_ptr<RipPacket> packet = std::make_shared<RipPacket>("",ip);
     packet->addRoute(distanceVector);
@@ -76,8 +94,10 @@ void Router::StartRIPProtocol(){
 void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet){
     lsdb->updateByOspfPacket(packet.get());
     routingTable->updateRoutingTableOSPF(lsdb);
-    packet.get()->decreaseTTL();
-    broadCast(packet);
+    if (packet.get()->getTTL() > 1){
+        packet.get()->decreaseTTL();
+        broadCast(packet);
+    }
 }
 
 void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
@@ -125,6 +145,9 @@ void Router::commandSlot(std::string command){
 }
 
 
+void Router::changeRoutingProtocol(RoutingProtocol _rp){
+    routingProtocl = _rp;
+}
 
 
 

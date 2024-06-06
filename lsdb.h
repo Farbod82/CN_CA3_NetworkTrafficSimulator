@@ -10,7 +10,7 @@ class LSDB: public QObject
 {
     Q_OBJECT
 public:
-    explicit LSDB(std::string);
+    explicit LSDB();
     void updateByOspfPacket(OspfPacket* ospfPacket);
     QHash<std::string, int> operator[] (const std::string& a) const;
     QList<std::string> keys() const;
@@ -20,7 +20,7 @@ private:
     Path pathToDestination;
     Edges cost;
     QHash<std::string, int> lastSequenceNumber;
-    void Dijkstra();
+    void removePreviousCosts(std::string dest);
 };
 
 // public slots:

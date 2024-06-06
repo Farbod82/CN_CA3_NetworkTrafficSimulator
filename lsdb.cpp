@@ -1,12 +1,13 @@
 #include "lsdb.h"
 #include <QObject>
 
-LSDB::LSDB(std::string _routerIp){
-    routerIp = _routerIp;
-}
-
-void LSDB::Dijkstra(){
-
+ void LSDB::removePreviousCosts(std::string dest){
+    cost[dest].clear();
+     for (auto d : cost[dest].keys()){
+        if (cost[d].contains(dest)){
+            cost[d].remove(dest);
+        }
+    }
 }
 
 void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
@@ -15,6 +16,8 @@ void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
             return;
         }
     }
+
+    removePreviousCosts(ospfPacket->getSource());
     Link links = ospfPacket->getLinks();
     QList<std::string> linkDests = links.keys();
     for (int i =0 ; i <linkDests.size(); i++){

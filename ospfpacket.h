@@ -10,7 +10,7 @@ typedef QHash<std::string, int> Link;
 class OspfPacket : public Packet
 {
 public:
-    OspfPacket(std::string _source_addr, Link _link, QObject *parent);
+    OspfPacket(std::string _source_addr, Link _link);
     void decreaseTTL();
     int getTTL();
     int getSequence();

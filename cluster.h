@@ -15,10 +15,14 @@ public:
     void createStarTopology(clockGenerator *clk, CommandReader *cmdr);
 private:
     int clusterNumber;
+    RoutingProtocol routingProtocol;
     std::vector<Router*> routers;
     std::vector<QThread*> threads;
-    void connectTwoRouter(Router* r1, Router* r2);
+    void connectTwoRouters(Router* r1, int p1, Router* r2, int p2);
+    void connectChangeRoutingProtocolSignal();
+
 signals:
+    void changeRoutingProtocol(RoutingProtocol _rp);
 };
 
 #endif // CLUSTER_H

@@ -4,18 +4,21 @@
 #include "node.h"
 #include "routingtable.h"
 #include "lsdb.h"
+#include "rippacket.h"
+
 #include <string>
 #include <vector>
-
 #include <QObject>
 #include <QHash>
 #include "buffer.h"
-#include "rippacket.h"
 
 
 #define NUMBER_OF_PORTS 5
 
-
+typedef enum RoutingProtocol{
+    RIP,
+    OSPF,
+} RoutingProtocol;
 
 
 class Router : public Node
@@ -35,10 +38,13 @@ public:
     void StartOSPFProtocol();
     void processRipPacket(std::shared_ptr<RipPacket> packet, int inPort);
     void printRoutingTable();
+    void setNeighbor(int port, std::string neighbor);
+    std::string getIp();
 public slots:
     void commandSlot(std::string command);
     void processPacketsOnSignal();
     void ospfBroadCastLinkCostChange();
+    void changeRoutingProtocol(RoutingProtocol _rp);
 private:
     int id;
     int AS;
@@ -47,6 +53,8 @@ private:
     QHash<std::string, int> shoretestPathPorts;
     LSDB* lsdb;
     RoutingTable* routingTable;
+    RoutingProtocol routingProtocl = RIP;
+    QHash<int, std::string> neighbors;
 };
 
 #endif // ROUTER_H
