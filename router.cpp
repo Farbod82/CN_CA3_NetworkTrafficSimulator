@@ -10,15 +10,6 @@
 
 
 
-
-std::string Router::getIp(){
-    return ip;
-}
-
-void Router::setNeighbor(int port, std::string neighbor){
-    neighbors[port] = neighbor;
-}
-
 Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
     : Node{_id,parent}
 {
@@ -36,6 +27,13 @@ Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
     routingTable = new RoutingTable(ip);
 }
 
+void Router::createPacket(int outPort){
+    std::shared_ptr<Packet> packet = std::make_shared<Packet>("123123","1233213","packet");
+    packet->setBody("I hate CN");
+    std::cout << "hoooooooooooooooooooooooy"<<std::endl;
+    // ports[outPort]->addToOutBuffer(packet);
+    broadCast(packet);
+}
 
 void Router::processPacketsOnSignal(){
 
@@ -58,16 +56,6 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
         auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
         processOspfPacket(ospf);
     }
-}
-
-
-
-void Router::createPacket(int outPort){
-    std::shared_ptr<Packet> packet = std::make_shared<Packet>("123123","1233213","packet");
-    packet->setBody("I hate CN");
-    std::cout << "hoooooooooooooooooooooooy"<<std::endl;
-    // ports[outPort]->addToOutBuffer(packet);
-    broadCast(packet);
 }
 
 void Router::broadCast(std::shared_ptr<Packet> packet){
@@ -149,7 +137,13 @@ void Router::changeRoutingProtocol(RoutingProtocol _rp){
     routingProtocl = _rp;
 }
 
+void Router::setNeighbor(int port, std::string neighbor){
+    neighbors[port] = neighbor;
+}
 
+std::string Router::getIp(){
+    return ip;
+}
 
 
 
