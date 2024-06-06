@@ -79,8 +79,8 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::handlePackets);
     h2->setPartners({host_ip[0]});
 
-    connectHost(routers[0], 4, h1);
-    connectHost(routers[1], 4, h2);
+    connectHost(routers[3], 4, h1);
+    connectHost(routers[4], 4, h2);
 
 }
 
