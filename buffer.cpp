@@ -32,3 +32,18 @@ void Buffer::sendPacket(){
 void Buffer::addToOutBuffer(std::shared_ptr<Packet> packet){
     outBuffer.insert(outBuffer.begin(), packet);
 }
+
+void Buffer::increaseDeliveryCycles(){
+    for (int i = 0; i < inBuffer.size(); ++i) {
+        if (inBuffer[i].get() != nullptr){
+            inBuffer[i].get()->increaseBufferWaitingCycles();
+        }
+    }
+}
+void Buffer::incWaitingCycles(){
+    for (int i = 0; i < inBuffer.size(); ++i) {
+        if (inBuffer[i].get() != nullptr){
+            inBuffer[i].get()->increaseBufferWaitingCycles();
+        }
+    }
+}

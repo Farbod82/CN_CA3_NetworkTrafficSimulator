@@ -5,7 +5,7 @@
 #include <cmath>
 #include <time.h>
 
-Host::Host(std::string _ip, double pareto_alpha, double pareto_xm, QObject *parent)
+Host::Host(std::string _ip, double pareto_alpha, double pareto_xm, int _as, QObject *parent)
     : QObject{parent}{
 
     ip = _ip;
@@ -14,19 +14,23 @@ Host::Host(std::string _ip, double pareto_alpha, double pareto_xm, QObject *pare
     port = new Buffer(0);
     srand(time(NULL));
     generator = new std::default_random_engine(time(NULL));
+    AS = _as;
 }
 
-void Host::setPartners(std::vector<std::string>* _partners){
-    partners  = _partners;
+void Host::setPartners(const std::vector<std::string>& _partners){
+    for (std::string p: _partners){
+        partners.push_back(p);
+    }
+
 }
 
 void Host::createAndSendPacket(){
-    int random = rand();
-    std::string choosed_partner = (*partners)[random%partners->size()];
+    int random = rand()%partners.size();
+    std::string choosed_partner = partners[random];
     std::shared_ptr<Packet> packet = std::make_shared<Packet>(ip, choosed_partner, "packet");
-    packet->setBody("Besme Allah Alrahman Alrahim");
+    packet.get()->setBody("Besme Allah Alrahman Alrahim");
+    packet.get()->addASNumber(AS);
     std::cout << "Packet sent"<<std::endl;
-    // ports[outPort]->addToOutBuffer(packet);
     port->addToOutBuffer(packet);
 }
 
@@ -48,11 +52,32 @@ void Host::parteoSendPacket(){
     }
 }
 
-void Host::receivePackets(){
+bool Host::regularType(Packet* packet){
+    if (packet->getType().compare("RIP") == 0){
+        return false;
+    }
+    else if (packet->getType().compare("OSPF") == 0){
+        return false;
+    }
+    else if (packet->getType().compare("EBGP") == 0){
+        return false;
+    }
+    else if(packet->getType().compare("IBGP") == 0){
+        return false;
+    }
+    else{
+        return true;
+    }
+
+}
+
+void Host::handlePackets(){
     std::shared_ptr<Packet> packet = port->getFirstPacket();
-    if (packet.get() != nullptr){
+    if (packet.get() != nullptr &&
+        regularType(packet.get())){
         std::cout << packet.get()->getSource() << std::endl;
     }
+    port->sendPacket();
 }
 
 std::string Host::getIp(){

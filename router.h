@@ -61,6 +61,7 @@ private:
     RoutingTable* routingTable;
     RoutingProtocol routingProtocl = RIP;
     QHash<int, std::string> neighbors;
+    int servingPortBuffer = 0;
 };
 
 #endif // ROUTER_H

@@ -13,6 +13,9 @@ public:
     void sendPacket();
     void addToOutBuffer(std::shared_ptr<Packet> packet);
     std::shared_ptr<Packet> getFirstPacket();
+    void incWaitingCycles();
+    void increaseDeliveryCycles();
+
 private:
     int id;
     std::vector<std::shared_ptr<Packet>> inBuffer;

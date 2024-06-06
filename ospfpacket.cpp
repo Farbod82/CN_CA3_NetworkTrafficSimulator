@@ -28,6 +28,10 @@ std::shared_ptr<OspfPacket> OspfPacket::copy(){
     std::shared_ptr<OspfPacket> cpy = std::make_shared<OspfPacket>(source_addr, links);
     cpy->ttl = ttl;
     cpy->sequence = sequence;
+    for (auto asn : ASNumbers) {
+        cpy->ASNumbers.push_back(asn);
+    }
+
     return cpy;
 }
 

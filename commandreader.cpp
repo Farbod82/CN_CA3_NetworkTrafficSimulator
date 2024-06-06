@@ -24,6 +24,9 @@ void CommandReader::readCommands()
         while ( getline( iss, s, ' ' ) ) {
             commandSplits.push_back(s);
         }
+        if (commandSplits.empty()){
+            continue;
+        }
         std::cout <<commandSplits[0] <<std::endl;
         if(commandSplits[0].compare("print") == 0)
             emit printRoutingTableRequested(commandSplits[1]);

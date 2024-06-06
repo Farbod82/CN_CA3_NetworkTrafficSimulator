@@ -44,18 +44,26 @@ bool Router::DoesBGPTableContain(std::string prefix) {
 
 void Router::processPacketsOnSignal(){
 
-    for (int i =0 ; i < NUMBER_OF_PORTS; i++){
-        std::shared_ptr<Packet> packet = ports[i]->getFirstPacket();
-        if (packet.get() != nullptr){
-            if (packet->getInitialASNumber() == AS){
-                processPackets(packet,i);
-            }
-            if (packet->getInitialASNumber() != AS && isBorder){
-                processBGP(packet,i);
-            }
+    for (int i = 0; i < NUMBER_OF_PORTS; ++i) {
+        ports[i]->increaseDeliveryCycles();
+    }
+
+    std::shared_ptr<Packet> packet = ports[servingPortBuffer]->getFirstPacket();
+    if (packet.get() != nullptr){
+        if (packet->getInitialASNumber() == AS){
+        processPackets(packet, servingPortBuffer);
         }
+        if (packet->getInitialASNumber() != AS && isBorder){
+            processBGP(packet,servingPortBuffer);
+        }
+    }
+    for (int i = 0; i < NUMBER_OF_PORTS; ++i) {
+        ports[i]->incWaitingCycles();
         ports[i]->sendPacket();
     }
+
+    servingPortBuffer +=1;
+    servingPortBuffer %= NUMBER_OF_PORTS;
 
 }
 void Router::processBGP(std::shared_ptr<Packet> packet,int inputPort){

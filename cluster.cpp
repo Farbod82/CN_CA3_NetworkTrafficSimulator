@@ -67,22 +67,21 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     connectTwoRouters(router, 2, routers[4], 2);
     connectTwoRouters(router, 3, routers[6], 2);
 
+
     std::vector<std::string> host_ip = {"192.168.101", "192.168.102"};
-
-    Host* h1 = new Host (host_ip[0], 0.1, 0.1);
+    Host* h1 = new Host (host_ip[0], 0.1, 0.1, clusterNumber);
     QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::parteoSendPacket);
-    QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::receivePackets);
+    QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::handlePackets);
+    h1->setPartners({host_ip[1]});
 
-    Host* h2 = new Host (host_ip[0], 0.1, 0.1);
+    Host* h2 = new Host (host_ip[1], 0.1, 0.1, clusterNumber);
     QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::parteoSendPacket);
-    QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::receivePackets);
+    QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::handlePackets);
+    h2->setPartners({host_ip[0]});
 
     connectHost(routers[0], 4, h1);
     connectHost(routers[1], 4, h2);
 
-    // for(int i =0 ; i < 8; i++){
-    //     threads[i]->start();
-    // }
 }
 
 

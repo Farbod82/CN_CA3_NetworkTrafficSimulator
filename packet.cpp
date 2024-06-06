@@ -21,10 +21,6 @@ std::string Packet::getDest(){
 }
 
 
-void Packet::setNextHopPort(int _port){
-    nextHopPort = _port;
-}
-
 std::string Packet::getBody(){
     return body;
 }
