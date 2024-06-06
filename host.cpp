@@ -24,34 +24,6 @@ void Host::setPartners(const std::vector<std::string>& _partners){
 
 }
 
-void Host::createAndSendPacket(){
-    int random = rand()%partners.size();
-    std::string choosed_partner = partners[random];
-    std::shared_ptr<Packet> packet = std::make_shared<Packet>(ip, choosed_partner, "packet");
-    packet.get()->setBody("Besme Allah Alrahman Alrahim");
-    packet.get()->addASNumber(AS);
-    std::cout << "Packet sent"<<std::endl;
-    port->addToOutBuffer(packet);
-}
-
-double Host::pareto_distribution() {
-    // Generate a uniform random variable between 0 and 1
-    std::uniform_real_distribution<double> uniform_dist(0.0, 1.0);
-    double u = uniform_dist(*generator);
-
-    // Apply the inverse transform method for Pareto distribution
-    return xm / std::pow(1 - u, 1.0 / alpha);
-}
-
-
-void Host::parteoSendPacket(){
-    double pareto = pareto_distribution();
-    double random = rand();
-    if (random < pareto){
-        // createAndSendPacket();
-    }
-}
-
 bool Host::regularType(Packet* packet){
     if (packet->getType().compare("RIP") == 0){
         return false;
@@ -69,6 +41,31 @@ bool Host::regularType(Packet* packet){
         return true;
     }
 
+}
+
+void Host::createAndSendPacket(){
+    int random = rand()%partners.size();
+    std::string choosed_partner = partners[random];
+    std::shared_ptr<Packet> packet = std::make_shared<Packet>(ip, choosed_partner, "packet");
+    packet.get()->setBody("Besme Allah Alrahman Alrahim");
+    packet.get()->addASNumber(AS);
+    std::cout << "Packet sent"<<std::endl;
+    port->addToOutBuffer(packet);
+}
+
+double Host::pareto_distribution() {
+    std::uniform_real_distribution<double> uniform_dist(0.0, 1.0);
+    double u = uniform_dist(*generator);
+    return xm / std::pow(1 - u, 1.0 / alpha);
+}
+
+
+void Host::parteoSendPacket(){
+    double pareto = pareto_distribution();
+    double random = rand();
+    if (random < pareto){
+        createAndSendPacket();
+    }
 }
 
 void Host::handlePackets(){
