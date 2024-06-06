@@ -196,6 +196,7 @@ void Router::StartOSPFProtocol(){
 void Router::StartEBGP(std::string routingProt){
     std::shared_ptr<EBPGPacket> packet = std::make_shared<EBPGPacket>("",ip);
     packet->addASNumber(AS);
+
     std::vector<std::string> prefixes = routingTable->createEbgpVector(routingProt);
     // for (auto it = BGPTable.begin(); it != BGPTable.end(); ++it) {
     //     prefixes.push_back(it.key());
@@ -211,6 +212,12 @@ void Router::StartRIPProtocol(){
     packet->addASNumber(AS);
     QHash<std::string,int> distanceVector =routingTable->createRipDistanceVector();
     distanceVector[ip] = 0;
+    for(int i =0; i< NUMBER_OF_PORTS; i++){
+        // distanceVector[neighbors[i]] = 1;
+        if (!routingTable->hasDestIP(neighbors[i])){
+            routingTable->insertRow(neighbors[i],"f",neighbors[i],i,1,"RIP");
+        }
+    }
     packet->addRoute(distanceVector);
     broadCast(packet);
 }
