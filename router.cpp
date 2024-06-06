@@ -11,11 +11,12 @@
 
 
 Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
-    : Node{_id,parent}
+    : Node(_id,parent)
 {
     AS = _AS;
     ip = _ip;
     id = _id;
+    routingProtocl = RIP;
     distanceVector[ip] = 0;
     shoretestPathPorts[ip] = 0;
     for(int i =0; i < NUMBER_OF_PORTS; i++){
@@ -23,7 +24,6 @@ Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
         ports.push_back(buffer);
         neighbors[i] = "";
     }
-    lsdb = new LSDB();
     routingTable = new RoutingTable(ip);
 }
 
@@ -80,7 +80,7 @@ void Router::StartRIPProtocol(){
 }
 
 void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet){
-    lsdb->updateByOspfPacket(packet.get());
+    lsdb.updateByOspfPacket(packet.get());
     routingTable->updateRoutingTableOSPF(lsdb);
     if (packet.get()->getTTL() > 1){
         packet.get()->decreaseTTL();
@@ -133,9 +133,9 @@ void Router::commandSlot(std::string command){
 }
 
 
-void Router::changeRoutingProtocol(RoutingProtocol _rp){
-    routingProtocl = _rp;
-}
+// void Router::changeRoutingProtocol(RoutingProtocol _rp){
+//     routingProtocl = _rp;
+// }
 
 void Router::setNeighbor(int port, std::string neighbor){
     neighbors[port] = neighbor;

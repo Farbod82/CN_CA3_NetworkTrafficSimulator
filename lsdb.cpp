@@ -1,7 +1,12 @@
 #include "lsdb.h"
 #include <QObject>
 
- void LSDB::removePreviousCosts(std::string dest){
+LSDB::LSDB(QObject *parent)
+    : QObject{parent}{
+
+}
+
+void LSDB::removePreviousCosts(std::string dest){
     cost[dest].clear();
      for (auto d : cost[dest].keys()){
         if (cost[d].contains(dest)){

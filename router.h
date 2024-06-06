@@ -3,14 +3,13 @@
 
 #include "node.h"
 #include "routingtable.h"
-#include "lsdb.h"
 #include "rippacket.h"
+#include "buffer.h"
 
 #include <string>
 #include <vector>
 #include <QObject>
 #include <QHash>
-#include "buffer.h"
 
 
 #define NUMBER_OF_PORTS 5
@@ -25,7 +24,7 @@ class Router : public Node
 {
     Q_OBJECT
 public:
-    explicit Router(int _id, std::string ip, int AS, QObject *parent);
+    explicit Router(int _id, std::string _ip, int _AS, QObject *parent = nullptr);
     void createPacket(int outPort);
     void send(std::shared_ptr<std::string> data);
 
@@ -43,15 +42,15 @@ public:
 public slots:
     void commandSlot(std::string command);
     void processPacketsOnSignal();
-    void ospfBroadCastLinkCostChange();
-    void changeRoutingProtocol(RoutingProtocol _rp);
+    // void ospfBroadCastLinkCostChange();
+    // void changeRoutingProtocol(RoutingProtocol _rp);
 private:
     int id;
     int AS;
     std::string ip;
     QHash<std::string, int> distanceVector;
     QHash<std::string, int> shoretestPathPorts;
-    LSDB* lsdb;
+    LSDB lsdb;
     RoutingTable* routingTable;
     RoutingProtocol routingProtocl = RIP;
     QHash<int, std::string> neighbors;

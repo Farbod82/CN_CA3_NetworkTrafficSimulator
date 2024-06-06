@@ -5,7 +5,8 @@
 #include <stack>
 #include <iostream>
 
-RoutingTable::RoutingTable(std::string _ip){
+RoutingTable::RoutingTable(std::string _ip, QObject* parrent)
+    :QObject{parrent}{
     routerIp = _ip;
 }
 
@@ -44,7 +45,7 @@ bool RoutingTable::insertRow(std::string dest, std::string subMask,
         metric.push_back(metr);
         protocol.push_back(prot);
         return true;
-    }
+    }   
 }
 
 bool RoutingTable::updateRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
@@ -147,13 +148,13 @@ QHash<std::string, std::pair<std::string, int>> RoutingTable::dijkstra(const LSD
 }
 
 
-void RoutingTable::updateRoutingTableOSPF(LSDB* lsdb){
+void RoutingTable::updateRoutingTableOSPF(const LSDB& lsdb){
     std::string destination;
-    QHash<std::string, std::pair<std::string, int>> StepCost = dijkstra(*lsdb);
+    QHash<std::string, std::pair<std::string, int>> StepCost = dijkstra(lsdb);
     for (int i = 0; i < destAddr.size(); i++) {
         destination = destAddr[i];
-        if ((*lsdb)[routerIp].contains(destination)){
-            if ((*lsdb)[routerIp][destination] < getDestinationCost(destination, "OSPF")){
+        if (lsdb[routerIp].contains(destination)){
+            if (lsdb[routerIp][destination] < getDestinationCost(destination, "OSPF")){
                 updateRowBaseOneDestinationAndProtocol(
                     destination,
                     subnetMask[i],

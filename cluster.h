@@ -19,10 +19,10 @@ private:
     std::vector<Router*> routers;
     std::vector<QThread*> threads;
     void connectTwoRouters(Router* r1, int p1, Router* r2, int p2);
-    void connectChangeRoutingProtocolSignal();
+    // void connectChangeRoutingProtocolSignal();
 
-signals:
-    void changeRoutingProtocol(RoutingProtocol _rp);
+// signals:
+//     void changeRoutingProtocol(RoutingProtocol _rp);
 };
 
 #endif // CLUSTER_H

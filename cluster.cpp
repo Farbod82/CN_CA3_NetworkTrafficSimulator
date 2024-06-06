@@ -1,6 +1,7 @@
 #include "commandreader.h"
 #include "clockgenerator.h"
 #include "cluster.h"
+#include "router.h"
 #include <QThread>
 #include <QtConcurrent>
 
@@ -10,16 +11,16 @@ Cluster::Cluster(int _clusterNumber,QObject *parent)
     clusterNumber = _clusterNumber;
 }
 
-void Cluster::connectChangeRoutingProtocolSignal(){
-    for (auto rt : routers){
-        QObject::connect(this, &Cluster::changeRoutingProtocol, rt, &Router::changeRoutingProtocol);
-    }
-}
+// void Cluster::connectChangeRoutingProtocolSignal(){
+//     for (auto rt : routers){
+//         QObject::connect(this, &Cluster::changeRoutingProtocol, rt, &Router::changeRoutingProtocol);
+//     }
+// }
 
 
-void Cluster::changeRoutingProtocol(RoutingProtocol _rp){
-    emit changeRoutingProtocol(_rp);
-}
+// void Cluster::changeRoutingProtocol(RoutingProtocol _rp){
+//     emit changeRoutingProtocol(_rp);
+// }
 
 
 void Cluster::connectTwoRouters(Router* r1, int p1, Router* r2, int p2){
@@ -34,7 +35,7 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
                                   ,"192.168.1.5","192.168.1.6","192.168.1.7","192.168.1.8"};
 
 
-    routers = {new Router(0,ipList[0],clusterNumber)};
+    routers.push_back(new Router(0, ipList[0], clusterNumber));
     QThread* thread = new QThread();
     threads.push_back(thread);
     routers[0]->moveToThread(thread);
