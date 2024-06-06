@@ -31,7 +31,7 @@ public:
     std::vector<Buffer*> ports;
 
     void processPackets(std::shared_ptr<Packet> packet, int inputPort);
-    void processOspfPacket(std::shared_ptr<OspfPacket> packet);
+    void processOspfPacket(std::shared_ptr<OspfPacket> packet, int inPort);
     void broadCast(std::shared_ptr<Packet> packet);
     void StartRIPProtocol();
     void StartOSPFProtocol();

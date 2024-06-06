@@ -15,6 +15,7 @@ public:
     int getTTL();
     int getSequence();
     Link getLinks();
+    OspfPacket* copy();
 
 private:
     int sequence = 0;

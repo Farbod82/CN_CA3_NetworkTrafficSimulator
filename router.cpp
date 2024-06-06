@@ -54,7 +54,7 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     }
     else if (packet->getType().compare("OSPF") == 0){
         auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
-        processOspfPacket(ospf);
+        processOspfPacket(ospf, inputPort);
     }
 }
 
@@ -67,7 +67,8 @@ void Router::broadCast(std::shared_ptr<Packet> packet){
 void Router::StartOSPFProtocol(){
     Link links;
     for (auto dest : neighbors.values()){
-        links[dest] = 1;
+        if (dest.compare("") != 0)
+            links[dest] = 1;
     }
     std::shared_ptr<OspfPacket> packet = std::make_shared<OspfPacket>(ip, links);
     broadCast(packet);
@@ -79,10 +80,14 @@ void Router::StartRIPProtocol(){
     broadCast(packet);
 }
 
-void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet){
+void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet, int inPort){
+    if (lsdb.oldSequence(packet.get())){
+        return;
+    }
+
     lsdb.updateByOspfPacket(packet.get());
-    routingTable->updateRoutingTableOSPF(lsdb);
-    if (packet.get()->getTTL() > 1){
+    routingTable->updateRoutingTableOSPF(lsdb, inPort);
+    if (packet.get()->getTTL() > 0){
         packet.get()->decreaseTTL();
         broadCast(packet);
     }
@@ -119,11 +124,12 @@ void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
 }
 
 void Router::printRoutingTable(){
-    QList keys = distanceVector.keys();
-    std::cout << "router: " << id << std::endl;
-    for(int i =0; i < keys.size(); i++){
-        std::cout << "ip: " <<keys[i] << " destinationPort: " << shoretestPathPorts[keys[i]] << " distance: " << distanceVector[keys[i]] << std::endl;
-    }
+    std::cout << *routingTable;
+    // QList keys = distanceVector.keys();
+    // std::cout << "router: " << id << std::endl;
+    // for(int i =0; i < keys.size(); i++){
+    //     std::cout << "ip: " <<keys[i] << " destinationPort: " << shoretestPathPorts[keys[i]] << " distance: " << distanceVector[keys[i]] << std::endl;
+    // }
 }
 
 
