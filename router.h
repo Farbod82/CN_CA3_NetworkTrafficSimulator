@@ -5,6 +5,7 @@
 #include "routingtable.h"
 #include "rippacket.h"
 #include "buffer.h"
+#include "ibgppacket.h"
 
 #include <string>
 #include <vector>
@@ -45,6 +46,10 @@ public:
     QHash<std::string,std::string> BGPTable;
     bool DoesBGPTableContain(std::string prefix);
     void forwardPacket(std::shared_ptr<Packet> packet, int inputPort);
+    void setibgpIps(std::vector<std::string> _ips);
+
+    std::string findShortestIBGP();
+    void sendToOtherAS(std::shared_ptr<IBPGPacket> packet);
 public slots:
     void commandSlot(std::string command);
     void processPacketsOnSignal();
@@ -62,6 +67,7 @@ private:
     RoutingProtocol routingProtocl = RIP;
     QHash<int, std::string> neighbors;
     int servingPortBuffer = 0;
+    std::vector<std::string> ibgpIps;
 };
 
 #endif // ROUTER_H

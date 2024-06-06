@@ -48,7 +48,7 @@ void Host::parteoSendPacket(){
     double pareto = pareto_distribution();
     double random = rand();
     if (random < pareto){
-        createAndSendPacket();
+        // createAndSendPacket();
     }
 }
 

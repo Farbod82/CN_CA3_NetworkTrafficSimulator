@@ -21,5 +21,3 @@ std::vector<std::string> EBPGPacket::getPrefixes(){
 
 
 
-
-

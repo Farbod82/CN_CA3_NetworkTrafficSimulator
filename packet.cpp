@@ -9,6 +9,9 @@ Packet::Packet(std::string _dest_addr, std::string _source_addr,std::string _Typ
 }
 
 
+
+
+
 int Packet::getInitialASNumber(){
     if (ASNumbers.empty()){
         std::cout << "ooooooooooooooooooooooooooh no set AS for you packets"<< std::endl;
@@ -63,4 +66,8 @@ void Packet::increaseDeliveryCycles(){
 
 void Packet::increaseBufferWaitingCycles(){
     bufferWaitingCycles++;
+}
+
+void Packet::setPacketDestination(std::string _dest){
+    dest_addr = _dest;
 }

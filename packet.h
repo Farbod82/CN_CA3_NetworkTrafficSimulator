@@ -26,6 +26,8 @@ public:
     IPVersion getIpVersion();
 
     virtual ~Packet(){}
+    std::string getDest();
+    void setPacketDestination(std::string _dest);
 protected:
     std::string source_addr;
     std::vector<int> ASNumbers;
