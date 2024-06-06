@@ -15,12 +15,20 @@ void LSDB::removePreviousCosts(std::string dest){
     }
 }
 
-void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
+bool LSDB::oldSequence(OspfPacket* ospfPacket){
     if (lastSequenceNumber.contains(ospfPacket->getSource())){
         if (ospfPacket->getSequence() <= lastSequenceNumber[ospfPacket->getSource()]){
-            return;
+            return true;
         }
     }
+    return false;
+}
+
+void LSDB::updateByOspfPacket(OspfPacket* ospfPacket){
+    if (oldSequence(ospfPacket)){
+        return;
+    }
+
 
     removePreviousCosts(ospfPacket->getSource());
     Link links = ospfPacket->getLinks();

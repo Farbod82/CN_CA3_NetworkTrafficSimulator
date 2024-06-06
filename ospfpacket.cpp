@@ -1,6 +1,6 @@
 #include "ospfpacket.h"
 
-OspfPacket::OspfPacket(std::string _source_addr, Link _link):Packet("broadcast",_source_addr,"OSPF") {
+OspfPacket::OspfPacket(std::string _source_addr, Link* _link):Packet("broadcast",_source_addr,"OSPF") {
     links = _link;
 }
 
@@ -21,5 +21,13 @@ void OspfPacket::incSequence(){
 }
 
 Link OspfPacket::getLinks(){
-    return links;
+    return *links;
 }
+
+std::shared_ptr<OspfPacket> OspfPacket::copy(){
+    std::shared_ptr<OspfPacket> cpy = std::make_shared<OspfPacket>(source_addr, links);
+    cpy->ttl = ttl;
+    cpy->sequence = sequence;
+    return cpy;
+}
+

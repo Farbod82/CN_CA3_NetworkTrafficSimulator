@@ -204,25 +204,39 @@ QHash<std::string, std::pair<std::string, int>> RoutingTable::dijkstra(const LSD
 
 
 
-void RoutingTable::updateRoutingTableOSPF(const LSDB& lsdb){
-    std::string destination;
+void RoutingTable::updateRoutingTableOSPF(const LSDB& lsdb, int inport){
     QHash<std::string, std::pair<std::string, int>> StepCost = dijkstra(lsdb);
-    for (int i = 0; i < destAddr.size(); i++) {
-        destination = destAddr[i];
-        if (lsdb[routerIp].contains(destination)){
-            if (lsdb[routerIp][destination] < getDestinationCost(destination, "OSPF")){
+
+    for (auto key : StepCost.keys()){
+        if (StepCost[key].second == std::numeric_limits<int>::max()){
+            continue;
+        }
+        bool updated = false;
+        for (int i = 0; i < destAddr.size(); ++i) {
+            if (destAddr[i].compare(key) == 0
+                && protocol[i] == "OSPF"){
                 updateRowBaseOneDestinationAndProtocol(
-                    destination,
+                    key,
                     subnetMask[i],
-                    StepCost[destination].first,
+                    StepCost[key].first,
                     interfacePort[i],
-                    StepCost[destination].second,
+                    StepCost[key].second,
                     protocol[i]
                     );
+                updated = true;
+                break;
             }
-            else{
-                removeRow(destination, protocol[i]);
-            }
+        }
+
+        if (!updated){
+            insertRow(
+                key,
+                "",
+                StepCost[key].first,
+                inport,
+                StepCost[key].second,
+                "OSPF"
+                );
         }
     }
 

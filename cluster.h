@@ -22,6 +22,7 @@ private:
     std::vector<Router*> routers;
     std::vector<QThread*> threads;
     void connectTwoRouters(Router* r1, int p1, Router* r2, int p2);
+    void connectHost(Router* rt, int rp, Host* ht, int hp);
     // void connectChangeRoutingProtocolSignal();
 
 // signals:

@@ -41,13 +41,6 @@ bool Router::DoesBGPTableContain(std::string prefix) {
     return BGPTable.contains(prefix);
 }
 
-void Router::createPacket(int outPort){
-    std::shared_ptr<Packet> packet = std::make_shared<Packet>("123123","1233213","packet");
-    packet->setBody("I hate CN");
-    std::cout << "hoooooooooooooooooooooooy"<<std::endl;
-    // ports[outPort]->addToOutBuffer(packet);
-    broadCast(packet);
-}
 
 void Router::processPacketsOnSignal(){
 
@@ -90,7 +83,7 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     }
     else if (packet->getType().compare("OSPF") == 0){
         auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
-        processOspfPacket(ospf);
+        processOspfPacket(ospf, inputPort);
     }
     else if (packet->getType().compare("EBGP") == 0){
 
@@ -123,16 +116,25 @@ void Router::forwardPacket(std::shared_ptr<Packet> packet,int inputPort){
 
 }
 
-void Router::broadCast(std::shared_ptr<Packet> packet){
-    for(int i =0; i < NUMBER_OF_PORTS; i++){
-        ports[i]->addToOutBuffer(packet);
+void Router::broadCast(std::shared_ptr<Packet> packet, RoutingProtocol rp){
+    if (rp == OSPF){
+        auto ospf = std::dynamic_pointer_cast<OspfPacket>(packet);
+        for(int i =0; i < NUMBER_OF_PORTS; i++){
+            ports[i]->addToOutBuffer(ospf.get()->copy());
+        }
+    }
+    else{
+        for(int i =0; i < NUMBER_OF_PORTS; i++){
+            ports[i]->addToOutBuffer(packet);
+        }
     }
 }
 
 void Router::StartOSPFProtocol(){
-    Link links;
+    Link* links = new Link();
     for (auto dest : neighbors.values()){
-        links[dest] = 1;
+        if (dest.compare("") != 0)
+            (*links)[dest] = 1;
     }
     std::shared_ptr<OspfPacket> packet = std::make_shared<OspfPacket>(ip, links);
     packet->addASNumber(AS);
@@ -162,12 +164,16 @@ void Router::StartRIPProtocol(){
     broadCast(packet);
 }
 
-void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet){
+void Router::processOspfPacket(std::shared_ptr<OspfPacket> packet, int inPort){
+    if (lsdb.oldSequence(packet.get())){
+        return;
+    }
+
     lsdb.updateByOspfPacket(packet.get());
-    routingTable->updateRoutingTableOSPF(lsdb);
-    if (packet.get()->getTTL() > 1){
+    routingTable->updateRoutingTableOSPF(lsdb, inPort);
+    if (packet.get()->getTTL() > 0){
         packet.get()->decreaseTTL();
-        broadCast(packet);
+        broadCast(packet, OSPF);
     }
 }
 
@@ -205,11 +211,12 @@ void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
 }
 
 void Router::printRoutingTable(){
-    QList keys = distanceVector.keys();
-    std::cout << "router: " << id << std::endl;
-    for(int i =0; i < keys.size(); i++){
-        std::cout << "ip: " <<keys[i] << " destinationPort: " << shoretestPathPorts[keys[i]] << " distance: " << distanceVector[keys[i]] << std::endl;
-    }
+    std::cout << *routingTable;
+    // QList keys = distanceVector.keys();
+    // std::cout << "router: " << id << std::endl;
+    // for(int i =0; i < keys.size(); i++){
+    //     std::cout << "ip: " <<keys[i] << " destinationPort: " << shoretestPathPorts[keys[i]] << " distance: " << distanceVector[keys[i]] << std::endl;
+    // }
 }
 
 
