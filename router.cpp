@@ -27,13 +27,6 @@ Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
     routingTable = new RoutingTable(ip);
 }
 
-void Router::createPacket(int outPort){
-    std::shared_ptr<Packet> packet = std::make_shared<Packet>("123123","1233213","packet");
-    packet->setBody("I hate CN");
-    std::cout << "hoooooooooooooooooooooooy"<<std::endl;
-    // ports[outPort]->addToOutBuffer(packet);
-    broadCast(packet);
-}
 
 void Router::processPacketsOnSignal(){
 
