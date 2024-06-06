@@ -72,7 +72,7 @@ void Host::handlePackets(){
     std::shared_ptr<Packet> packet = port->getFirstPacket();
     if (packet.get() != nullptr &&
         regularType(packet.get())){
-        std::cout << packet.get()->getSource() << std::endl;
+        std::cout <<"WOW " << packet.get()->getSource() << std::endl;
     }
     port->sendPacket();
 }

@@ -72,16 +72,15 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     }
 
 
-    std::vector<std::string> host_ip = {"192.168.101", "192.168.102"};
-    Host* h1 = new Host (host_ip[0], 0.1, 0.1, clusterNumber);
+    Host* h1 = new Host (host_ip1[0], 0.1, 0.1, clusterNumber);
     QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::parteoSendPacket);
     QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::handlePackets);
-    h1->setPartners({host_ip[1]});
+    h1->setPartners(host_ip2);
 
-    Host* h2 = new Host (host_ip[1], 0.1, 0.1, clusterNumber);
+    Host* h2 = new Host (host_ip1[1], 0.1, 0.1, clusterNumber);
     QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::parteoSendPacket);
     QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::handlePackets);
-    h2->setPartners({host_ip[0]});
+    h2->setPartners(host_ip2);
 
     connectHost(routers[3], 4, h1);
     connectHost(routers[4], 4, h2);
@@ -127,6 +126,18 @@ void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
     for (int i =0; i < routers.size(); i++){
         routers[i]->setibgpIps({"192.168.1.16","192.168.1.20","192.168.1.24"});
     }
+    Host* h1 = new Host (host_ip2[0], 0.1, 0.1, clusterNumber);
+    QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::parteoSendPacket);
+    QObject::connect(clk, &clockGenerator::clockSignal, h1, &Host::handlePackets);
+    h1->setPartners(host_ip1);
+
+    Host* h2 = new Host (host_ip2[1], 0.1, 0.1, clusterNumber);
+    QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::parteoSendPacket);
+    QObject::connect(clk, &clockGenerator::clockSignal, h2, &Host::handlePackets);
+    h2->setPartners(host_ip1);
+
+    connectHost(routers[8], 4, h1);
+    connectHost(routers[12], 4, h2);
 
 }
 

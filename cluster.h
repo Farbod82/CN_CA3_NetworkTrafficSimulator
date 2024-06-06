@@ -24,6 +24,8 @@ private:
     std::vector<QThread*> threads;
     void connectTwoRouters(Router* r1, int p1, Router* r2, int p2);
     void connectHost(Router* rt, int rp, Host* ht);
+    std::vector<std::string> host_ip1 = {"192.168.101", "192.168.102"};
+    std::vector<std::string> host_ip2 = {"192.168.201", "192.168.202"};
     // void connectChangeRoutingProtocolSignal();
 
 // signals:
