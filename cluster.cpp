@@ -33,6 +33,7 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
         QObject::connect(clk, &clockGenerator::clockSignal, routers[i], &Router::processPacketsOnSignal);
         QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, routers[i], &Router::commandSlot);
     }
+
     QThread* threadMid = threads[7];
     Router* router = routers[7];
     router->moveToThread(threadMid);
@@ -48,8 +49,50 @@ void Cluster::createStarTopology(clockGenerator* clk, CommandReader* cmdr){
     QObject::connect(router->ports[3], &Buffer::sendPacketSignal, routers[6]->ports[2], &Buffer::recievePacket);
     QObject::connect(routers[6]->ports[2], &Buffer::sendPacketSignal, router->ports[3], &Buffer::recievePacket);
 
-    for(int i =0 ; i < 8; i++){
+    // for(int i =0 ; i < 8; i++){
+    //     threads[i]->start();
+    // }
+}
+
+
+void Cluster::startThreads(){
+    for(int i=0; i < threads.size(); i++){
         threads[i]->start();
+    }
+}
+
+void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
+    std::vector<std::string> ipList = {"192.168.1.1","192.168.1.2","192.168.1.3","192.168.1.4"
+                                       ,"192.168.1.5","192.168.1.6","192.168.1.7","192.168.1.8","192.168.1.9","192.168.1.10","192.168.1.11", "192.168.1.12","192.168.1.13","192.168.1.14","192.168.1.15","192.168.1.16"};
+
+    for (int i =0; i < 4; i++){
+        Router* router1 = new Router(i*4,ipList[i*4],clusterNumber);
+        QThread* thread1 = new QThread();
+        routers.push_back(router1);
+        threads.push_back(thread1);
+        router1->moveToThread(thread1);
+        if (i != 0){
+            QObject::connect(router1->ports[3], &Buffer::sendPacketSignal, routers[(i-1)*4]->ports[2], &Buffer::recievePacket);
+            QObject::connect(routers[(i-1)*4]->ports[2], &Buffer::sendPacketSignal, router1->ports[3], &Buffer::recievePacket);
+
+        }
+        QObject::connect(clk, &clockGenerator::clockSignal, router1, &Router::processPacketsOnSignal);
+        QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, router1, &Router::commandSlot);
+        for (int j = 1 ; j < 4; j++){
+            Router* router = new Router((i*4)+j,ipList[(i*4)+j],clusterNumber);
+            QThread* thread = new QThread();
+            routers.push_back(router);
+            threads.push_back(thread);
+            router->moveToThread(thread);
+            if (i != 0){
+                QObject::connect(router->ports[3], &Buffer::sendPacketSignal, routers[((i-1)*4)+j]->ports[2], &Buffer::recievePacket);
+                QObject::connect(routers[((i-1)*4)+j]->ports[2], &Buffer::sendPacketSignal, router->ports[3], &Buffer::recievePacket);
+            }
+            QObject::connect(router->ports[1], &Buffer::sendPacketSignal, routers[((i)*4)+j-1]->ports[0], &Buffer::recievePacket);
+            QObject::connect(routers[((i)*4)+j-1]->ports[0], &Buffer::sendPacketSignal, router->ports[1], &Buffer::recievePacket);
+            QObject::connect(clk, &clockGenerator::clockSignal, router, &Router::processPacketsOnSignal);
+            QObject::connect(cmdr, &CommandReader::printRoutingTableRequested, router, &Router::commandSlot);
+        }
     }
 }
 

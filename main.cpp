@@ -21,7 +21,10 @@ int main(int argc, char *argv[])
     clk.moveToThread(&thread1);
     cmndr.moveToThread(&thread3);
 
-    cluster.createStarTopology(&clk,&cmndr);
+    // cluster.createStarTopology(&clk,&cmndr);
+    cluster.createMeshTopology(&clk,&cmndr);
+    cluster.startThreads();
+
     thread1.start();
     thread2.start();
     thread3.start();

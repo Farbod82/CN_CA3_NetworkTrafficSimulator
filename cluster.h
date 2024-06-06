@@ -13,6 +13,8 @@ public:
     explicit Cluster(int _clusterNumber,QObject *parent = nullptr);
     void startRouting();
     void createStarTopology(clockGenerator *clk, CommandReader *cmdr);
+    void startThreads();
+    void createMeshTopology(clockGenerator *clk, CommandReader *cmdr);
 private:
     int clusterNumber;
     std::vector<Router*> routers;
