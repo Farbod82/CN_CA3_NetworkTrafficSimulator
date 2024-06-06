@@ -27,6 +27,9 @@ public:
     QHash<std::string, std::pair<std::string, int>> dijkstra(const LSDB& lsdb);
     void updateRoutingTableOSPF(const LSDB& lsdb);
     void printShortestPath(const QHash<std::string, DJNode>& dist, std::string dest);
+    friend std::ostream& operator<< (std::ostream& stream, const RoutingTable& rt);
+
+
 
 private:
     std::string routerIp;
