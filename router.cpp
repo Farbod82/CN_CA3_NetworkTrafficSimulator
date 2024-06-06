@@ -97,16 +97,16 @@ void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
         newVector[keys[i]] += 1;
     }
     for (int i =0; i < keys.size(); i++){
-        if (distanceVector.contains(keys[i])){
-            if (newVector[keys[i]] < distanceVector[keys[i]]){
-                distanceVector[keys[i]] = newVector[keys[i]];
-                shoretestPathPorts[keys[i]] = inPort;
+
+        if (routingTable->hasDestIP(keys[i])){
+            if (newVector[keys[i]] < routingTable->getDestinationCost(keys[i],"RIP")){
+                routingTable->setDestinationCost(keys[i],"RIP",newVector[keys[i]]);
+                routingTable->setOutputPort(keys[i],"RIP",inPort);
                 updated = true;
             }
         }
         else{
-            distanceVector[keys[i]] = newVector[keys[i]];
-            shoretestPathPorts[keys[i]] = inPort;
+            routingTable->insertRow(keys[i],"f",neighbors[inPort], inPort, newVector[keys[i]],"RIP");
             updated = true;
         }
     }

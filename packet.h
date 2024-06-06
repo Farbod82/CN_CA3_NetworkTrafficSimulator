@@ -3,6 +3,7 @@
 
 
 #include<string>
+#include <vector>
 
 class Packet
 {
@@ -13,9 +14,13 @@ public:
     void setBody(std::string _body);
     std::string getType();
     std::string getSource();
+    void addASNumber(int _AS);
+
+
     virtual ~Packet(){}
 private:
     std::string Type;
+    std::vector<int> ASNumbers;
     std::string dest_addr;
     std::string source_addr;
     int nextHopPort;

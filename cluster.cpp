@@ -75,8 +75,8 @@ void Cluster::startThreads(){
 }
 
 void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
-    std::vector<std::string> ipList = {"192.168.1.1","192.168.1.2","192.168.1.3","192.168.1.4"
-                                       ,"192.168.1.5","192.168.1.6","192.168.1.7","192.168.1.8","192.168.1.9","192.168.1.10","192.168.1.11", "192.168.1.12","192.168.1.13","192.168.1.14","192.168.1.15","192.168.1.16"};
+    std::vector<std::string> ipList = {"192.168.1.9","192.168.1.10","192.168.1.11","192.168.1.12"
+                                       ,"192.168.1.13","192.168.1.14","192.168.1.15","192.168.1.16","192.168.1.17","192.168.1.18","192.168.1.19", "192.168.1.20","192.168.1.21","192.168.1.22","192.168.1.23","192.168.1.24"};
 
     for (int i =0; i < 4; i++){
         Router* router1 = new Router(i*4,ipList[i*4],clusterNumber);
@@ -109,12 +109,28 @@ void Cluster::createMeshTopology(clockGenerator* clk, CommandReader* cmdr){
     }
 }
 
+
+void Cluster::addStarToMesh(Cluster* starCluster){
+
+    QObject::connect(routers[7]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[6]->ports[4], &Buffer::recievePacket);
+    QObject::connect(starCluster->routers[0]->ports[4], &Buffer::sendPacketSignal, routers[11]->ports[4], &Buffer::recievePacket);
+
+    QObject::connect(routers[11]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[0]->ports[4], &Buffer::recievePacket);
+    QObject::connect(starCluster->routers[0]->ports[4], &Buffer::sendPacketSignal, routers[11]->ports[4], &Buffer::recievePacket);
+
+    QObject::connect(routers[15]->ports[4], &Buffer::sendPacketSignal, starCluster->routers[1]->ports[4], &Buffer::recievePacket);
+    QObject::connect(starCluster->routers[1]->ports[4], &Buffer::sendPacketSignal, routers[15]->ports[4], &Buffer::recievePacket);
+}
+
 void Cluster::startRouting(){
-    // QtConcurrent::run(&Router::StartRIPProtocol, routers[0]);
-    QtConcurrent::run(&Router::StartOSPFProtocol, routers[0]);
+    QtConcurrent::run(&Router::StartRIPProtocol, routers[0]);
+    // QtConcurrent::run(&Router::StartOSPFProtocol, routers[0]);
     // QThread::sleep(1);
     // for (int i =0; i < 8; i++){
     //     routers[i]->printRoutingTable();
     // }
 }
+
+
+
 

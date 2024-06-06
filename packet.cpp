@@ -29,3 +29,9 @@ std::string Packet::getSource(){
     return source_addr;
 }
 
+
+void Packet::addASNumber(int _AS){
+    ASNumbers.push_back(_AS);
+}
+
+

@@ -15,6 +15,7 @@ public:
     void createStarTopology(clockGenerator *clk, CommandReader *cmdr);
     void startThreads();
     void createMeshTopology(clockGenerator *clk, CommandReader *cmdr);
+    void addStarToMesh(Cluster *starCluster);
 private:
     int clusterNumber;
     RoutingProtocol routingProtocol;

@@ -27,7 +27,9 @@ public:
     QHash<std::string, std::pair<std::string, int>> dijkstra(const LSDB& lsdb);
     void updateRoutingTableOSPF(const LSDB& lsdb);
     void printShortestPath(const QHash<std::string, DJNode>& dist, std::string dest);
-
+    bool hasDestIP(std::string _destination);
+    void setDestinationCost(std::string _destination, std::string _protocol, int newCost);
+    void setOutputPort(std::string _destination, std::string _protocol, int newPort);
 private:
     std::string routerIp;
     std::vector<std::string> destAddr;

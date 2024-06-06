@@ -17,9 +17,22 @@ int RoutingTable::getOutputPort(std::string _destination, std::string _protocol)
             return interfacePort[i];
         }
     }
-    
+
     return NO_WAY;
 }
+
+
+bool RoutingTable::hasDestIP(std::string _destination){
+    for (int i = 0; i < destAddr.size(); i++){
+        if (destAddr[i] == _destination){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+
 
 int RoutingTable::getDestinationCost(std::string _destination, std::string _protocol){
     for (int i = 0; i < destAddr.size(); i++){
@@ -28,8 +41,26 @@ int RoutingTable::getDestinationCost(std::string _destination, std::string _prot
             return metric[i];
         }
     }
-
     return NO_WAY;
+}
+
+
+
+void RoutingTable::setDestinationCost(std::string _destination, std::string _protocol,int newCost){
+    for (int i = 0; i < destAddr.size(); i++){
+        if (destAddr[i] == _destination &&
+                protocol[i] == _protocol){
+            metric[i] = newCost;
+        }
+    }
+}
+void RoutingTable::setOutputPort(std::string _destination, std::string _protocol,int newPort){
+    for (int i = 0; i < destAddr.size(); i++){
+        if (destAddr[i] == _destination &&
+            protocol[i] == _protocol){
+            interfacePort[i] = newPort;
+        }
+    }
 }
 
 bool RoutingTable::insertRow(std::string dest, std::string subMask,
@@ -47,6 +78,7 @@ bool RoutingTable::insertRow(std::string dest, std::string subMask,
         return true;
     }   
 }
+
 
 bool RoutingTable::updateRowBaseOneDestinationAndProtocol(std::string dest, std::string subMask,
               std::string gate, int port, int metr, std::string prot){
@@ -146,6 +178,7 @@ QHash<std::string, std::pair<std::string, int>> RoutingTable::dijkstra(const LSD
 
     return results;
 }
+
 
 
 void RoutingTable::updateRoutingTableOSPF(const LSDB& lsdb){
