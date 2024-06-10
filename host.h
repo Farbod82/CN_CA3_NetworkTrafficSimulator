@@ -16,6 +16,7 @@ public:
     Buffer* port;
     std::string getIp();
     bool regularType(Packet* packet);
+    bool sent =0;
 
 private:
     double alpha, xm;

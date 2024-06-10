@@ -158,7 +158,10 @@ void Router::forwardPacket(std::shared_ptr<Packet> packet,int inputPort){
         std::string bgpIp = findShortestIBGP();
         ibgpPacket->setPacketDestination(bgpIp);
         ibgpPacket->setfinalDest(packet->getDest());
-        ports[routingTable->getOutputPort(bgpIp,prot)]->addToOutBuffer(ibgpPacket);
+        int outport = routingTable->getOutputPort(bgpIp,prot);
+        if (outport != NO_WAY){
+            ports[routingTable->getOutputPort(bgpIp,prot)]->addToOutBuffer(ibgpPacket);
+        }
     }
     else{
         ports[nextPort]->addToOutBuffer(packet);

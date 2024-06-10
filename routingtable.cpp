@@ -18,7 +18,6 @@ int RoutingTable::getOutputPort(std::string _destination, std::string _protocol)
             return interfacePort[i];
         }
     }
-
     return NO_WAY;
 }
 
