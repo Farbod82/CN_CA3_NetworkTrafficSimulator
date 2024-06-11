@@ -5,7 +5,7 @@
 #include <cmath>
 #include <time.h>
 
-Host::Host(std::string _ip, double pareto_alpha, double pareto_xm, int _as, QObject *parent)
+Host::Host(std::string _ip, double pareto_alpha, double pareto_xm, int _as, std::string _mask, QObject *parent)
     : QObject{parent}{
 
     ip = _ip;
@@ -15,6 +15,7 @@ Host::Host(std::string _ip, double pareto_alpha, double pareto_xm, int _as, QObj
     srand(time(NULL));
     generator = new std::default_random_engine(time(NULL));
     AS = _as;
+    mask = _mask;
 }
 
 void Host::setPartners(const std::vector<std::string>& _partners){
@@ -34,8 +35,8 @@ bool Host::regularType(Packet* packet){
     else if (packet->getType().compare("EBGP") == 0){
         return false;
     }
-    else if(packet->getType().compare("IBGP") == 0){
-        return false;
+    else if(packet->getType().compare("BGP") == 0){
+        return true;
     }
     else{
         return true;
@@ -46,10 +47,10 @@ bool Host::regularType(Packet* packet){
 void Host::createAndSendPacket(){
     int random = rand()%partners.size();
     std::string choosed_partner = partners[random];
-    std::shared_ptr<Packet> packet = std::make_shared<Packet>(ip, choosed_partner, "packet");
+    std::shared_ptr<Packet> packet = std::make_shared<Packet>(choosed_partner, ip,"0.0.0.0", "packet");
     packet.get()->setBody("Besme Allah Alrahman Alrahim");
     packet.get()->addASNumber(AS);
-    std::cout << "Packet sent"<<std::endl;
+    // std::cout << "Packet sent"<<std::endl;
     port->addToOutBuffer(packet);
 }
 
@@ -65,6 +66,7 @@ void Host::parteoSendPacket(){
     double random = rand();
     if (random < pareto && sent == 0){
         createAndSendPacket();
+        // sent = 1;
     }
 }
 
@@ -72,7 +74,9 @@ void Host::handlePackets(){
     std::shared_ptr<Packet> packet = port->getFirstPacket();
     if (packet.get() != nullptr &&
         regularType(packet.get())){
-        std::cout <<"WOW " << packet.get()->getSource() << std::endl;
+        // std::cout <<"WOW " << packet.get()->getSource() << std::endl;
+        packet->addPath(ip);
+        emit sendPacket(packet);
     }
     port->sendPacket();
 }
@@ -80,3 +84,4 @@ void Host::handlePackets(){
 std::string Host::getIp(){
     return ip;
 }
+

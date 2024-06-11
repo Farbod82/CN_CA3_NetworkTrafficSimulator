@@ -4,7 +4,7 @@
 
 
 
-IBPGPacket::IBPGPacket(std::string _dest_addr, std::string _source_addr):Packet(_dest_addr,_source_addr,"IBGP") {
+IBPGPacket::IBPGPacket(std::string _dest_addr, std::string _source_addr):Packet(_dest_addr,_source_addr,"0.0.0.0","IBGP") {
 
 }
 
@@ -16,5 +16,8 @@ std::string IBPGPacket::getFinalDest(){
     return finalDest;
 }
 
+void IBPGPacket::setType(std::string _type){
+    Type = _type;
+}
 
 

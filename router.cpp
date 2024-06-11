@@ -11,13 +11,14 @@
 #include "ibgppacket.h"
 
 
-Router::Router(int _id, std::string _ip, int _AS, QObject *parent)
+Router::Router(int _id, std::string _ip, int _AS,std::string _mask, QObject *parent)
     : Node(_id,parent)
 {
     isBorder = false;
     AS = _AS;
     ip = _ip;
     id = _id;
+    mask = _mask;
     routingProtocl = RIP;
     distanceVector[ip] = 0;
     shoretestPathPorts[ip] = 0;
@@ -50,12 +51,14 @@ void Router::processPacketsOnSignal(){
 
     std::shared_ptr<Packet> packet = ports[servingPortBuffer]->getFirstPacket();
     if (packet.get() != nullptr){
+        packet->addPath(ip);
         if (packet->getInitialASNumber() == AS){
-        processPackets(packet, servingPortBuffer);
+            processPackets(packet, servingPortBuffer);
         }
         if (packet->getInitialASNumber() != AS && isBorder){
             processBGP(packet,servingPortBuffer);
         }
+
     }
     for (int i = 0; i < NUMBER_OF_PORTS; ++i) {
         ports[i]->incWaitingCycles();
@@ -81,14 +84,20 @@ void Router::processBGP(std::shared_ptr<Packet> packet,int inputPort){
             // startIbgp();
         }
     }
+    else if (packet->getType().compare("BGP") == 0){
+        packet->addASNumber(AS);
+        forwardPacket(packet,inputPort);
+    }
 }
 
-void Router::sendToOtherAS(std::shared_ptr<IBPGPacket> packet){
+void Router::sendToOtherAS(std::shared_ptr<Packet> packet){
     packet->setPacketDestination(packet->getFinalDest());
+    // packet->addASNumber(AS);
     ports[4]->addToOutBuffer(packet);
 }
 
 void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
+
     // std::cout << "router " << id << " got packet " << packet.get()->getBody() << " on port " << inputPort << std::endl;
     if (packet->getType().compare("RIP") == 0){
         auto rip = std::dynamic_pointer_cast<RipPacket>(packet);
@@ -101,11 +110,12 @@ void Router::processPackets(std::shared_ptr<Packet> packet,int inputPort){
     else if (packet->getType().compare("EBGP") == 0){
 
     }
-    else if(packet->getType().compare("IBGP") == 0 && isBorder && packet->getInitialASNumber() != AS){
+    else if(packet->getType().compare("BGP") == 0 && isBorder){
         // auto ibgp = std::dynamic_pointer_cast<IBPGPacket>(packet);
-        // sendToOtherAS(ibgp);
+        sendToOtherAS(packet);
     }
     else{
+
         forwardPacket(packet,inputPort);
     }
 }
@@ -141,6 +151,7 @@ std::string Router::findShortestIBGP(){
 
 
 void Router::forwardPacket(std::shared_ptr<Packet> packet,int inputPort){
+
     std::string forwIp = packet->getDest();
     int nextPort = NO_WAY;
     std::string prot;
@@ -154,13 +165,13 @@ void Router::forwardPacket(std::shared_ptr<Packet> packet,int inputPort){
     }
 
     if (nextPort == NO_WAY){
-        std::shared_ptr<IBPGPacket> ibgpPacket = std::make_shared<IBPGPacket>("",packet->getSource());
+        packet->setType("BGP");
         std::string bgpIp = findShortestIBGP();
-        ibgpPacket->setPacketDestination(bgpIp);
-        ibgpPacket->setfinalDest(packet->getDest());
+        packet->setFinalDest(packet->getDest());
+        packet->setPacketDestination(bgpIp);
         int outport = routingTable->getOutputPort(bgpIp,prot);
         if (outport != NO_WAY){
-            ports[routingTable->getOutputPort(bgpIp,prot)]->addToOutBuffer(ibgpPacket);
+            ports[outport]->addToOutBuffer(packet);
         }
     }
     else{
@@ -201,9 +212,6 @@ void Router::StartEBGP(std::string routingProt){
     packet->addASNumber(AS);
 
     std::vector<std::string> prefixes = routingTable->createEbgpVector(routingProt);
-    // for (auto it = BGPTable.begin(); it != BGPTable.end(); ++it) {
-    //     prefixes.push_back(it.key());
-    // }
     packet->addRoute(prefixes);
     broadCast(packet);
 }
@@ -216,9 +224,8 @@ void Router::StartRIPProtocol(){
     QHash<std::string,int> distanceVector =routingTable->createRipDistanceVector();
     distanceVector[ip] = 0;
     for(int i =0; i< NUMBER_OF_PORTS; i++){
-        // distanceVector[neighbors[i]] = 1;
         if (!routingTable->hasDestIP(neighbors[i])){
-            routingTable->insertRow(neighbors[i],"f",neighbors[i],i,1,"RIP");
+            routingTable->insertRow(neighbors[i],"0.0.0.0",neighbors[i],i,1,"RIP");
         }
     }
     packet->addRoute(distanceVector);
@@ -256,7 +263,7 @@ void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
             }
         }
         else{
-            routingTable->insertRow(keys[i],"f",neighbors[inPort], inPort, newVector[keys[i]],"RIP");
+            routingTable->insertRow(keys[i],"0.0.0.0",neighbors[inPort], inPort, newVector[keys[i]],"RIP");
             updated = true;
         }
     }
@@ -270,11 +277,6 @@ void Router::processRipPacket(std::shared_ptr<RipPacket> packet,int inPort){
 
 void Router::printRoutingTable(){
     std::cout << *routingTable;
-    // QList keys = distanceVector.keys();
-    // std::cout << "router: " << id << std::endl;
-    // for(int i =0; i < keys.size(); i++){
-    //     std::cout << "ip: " <<keys[i] << " destinationPort: " << shoretestPathPorts[keys[i]] << " distance: " << distanceVector[keys[i]] << std::endl;
-    // }
 }
 
 
@@ -295,9 +297,7 @@ void Router::commandSlot(std::string command){
 
 
 
-// void Router::changeRoutingProtocol(RoutingProtocol _rp){
-//     routingProtocl = _rp;
-// }
+
 
 void Router::setNeighbor(int port, std::string neighbor){
     neighbors[port] = neighbor;

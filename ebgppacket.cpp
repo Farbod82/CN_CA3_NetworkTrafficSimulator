@@ -4,7 +4,7 @@
 
 
 
-EBPGPacket::EBPGPacket(std::string _dest_addr, std::string _source_addr):Packet(_dest_addr,_source_addr,"EBGP") {
+EBPGPacket::EBPGPacket(std::string _dest_addr, std::string _source_addr):Packet(_dest_addr,_source_addr,"0.0.0.0","EBGP") {
 
 }
 

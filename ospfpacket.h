@@ -15,7 +15,7 @@ public:
     int getTTL();
     int getSequence();
     Link getLinks();
-    std::shared_ptr<OspfPacket> copy();
+    std::shared_ptr<Packet> copy();
 
 private:
     int sequence = 0;

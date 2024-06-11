@@ -13,10 +13,10 @@ class Cluster : public QObject
 public:
     explicit Cluster(int _clusterNumber,QObject *parent = nullptr);
     void startRouting();
-    void createStarTopology(clockGenerator *clk, CommandReader *cmdr);
     void startThreads();
-    void createMeshTopology(clockGenerator *clk, CommandReader *cmdr);
     void addStarToMesh(Cluster *starCluster);
+    void createStarTopology(clockGenerator *clk, CommandReader *cmdr, PacketSaver *packetSaver);
+    void createMeshTopology(clockGenerator *clk, CommandReader *cmdr, PacketSaver *packetSaver);
 private:
     int clusterNumber;
     RoutingProtocol routingProtocol;

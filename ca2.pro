@@ -21,6 +21,7 @@ SOURCES += \
         node.cpp \
         ospfpacket.cpp \
         packet.cpp \
+        packetsaver.cpp \
         rippacket.cpp \
         router.cpp \
         routingtable.cpp
@@ -42,6 +43,7 @@ HEADERS += \
     node.h \
     ospfpacket.h \
     packet.h \
+    packetsaver.h \
     rippacket.h \
     router.h \
     routingtable.h
